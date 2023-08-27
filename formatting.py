@@ -158,6 +158,6 @@ def handler(antenna_path, params_path):
 
 
 if __name__ == '__main__':
-    antenna_path = r'Summative/Data sets/TxAntennaDAB.csv'
-    params_path = r'Summative/Data sets/TxParamsDAB.csv'
+    antenna_path = r'C:\Computer Science\Advanced Programming\Summative\Data sets/TxAntennaDAB.csv'
+    params_path = r'C:\Computer Science\Advanced Programming\Summative\Data sets/TxParamsDAB.csv'
     handler(antenna_path, params_path)
