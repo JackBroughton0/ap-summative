@@ -50,19 +50,30 @@ def wrangle_dab_multiplex(df, dab_multiplexes):
     """Extract DAB multiplexes C18A, C18F and C188 into their own columns.
     Then join each of these categories to the NGR that signifies the DAB
     stations location to the following: Site, Site Height, In-Use Ae Ht, In-Use ERP Total"""
-    # Instantiate list of columns to join values
-    cols_to_join = ['EID', 'NGR', 'Site', 'Site Height', 'In-Use Ae Ht', 'In-Use ERP Total']
-    # df[f'DAB_multiplex'] = np.where(df['EID'].isin(dab_multiplexes), df['EID'], '')
-    for multiplex in dab_multiplexes:
-        # Create a new column for each DAB multiplex
-        df[f'DAB_{multiplex}'] = np.where(
-            df['EID'] == multiplex,
-            df[cols_to_join].apply(lambda row: ' | '.join(row.astype(str).str.strip()), axis=1),
-            ''
-        )
-    df = df.rename({'In-Use Ae Ht': 'Aerial height(m)',
-                     'In-Use ERP Total': 'Power(kW)'}, axis=1)
-    return df
+    # # Instantiate list of columns to join values
+    # cols_to_join = ['EID', 'NGR', 'Site', 'Site Height', 'In-Use Ae Ht', 'In-Use ERP Total']
+    # # df[f'DAB_multiplex'] = np.where(df['EID'].isin(dab_multiplexes), df['EID'], '')
+    # for multiplex in dab_multiplexes:
+    #     # Create a new column for each DAB multiplex
+    #     df[f'DAB_{multiplex}'] = np.where(
+    #         df['EID'] == multiplex,
+    #         df[cols_to_join].apply(lambda row: ' | '.join(row.astype(str).str.strip()), axis=1),
+    #         ''
+    #     )
+    # df = df.rename({'In-Use Ae Ht': 'Aerial height(m)',
+    #                  'In-Use ERP Total': 'Power(kW)'}, axis=1)
+    # return df
+    # Define the DAB multiplexes and columns to keep
+    columns_to_keep = ['NGR', 'Site', 'Site Height', 'In-Use Ae Ht', 'In-Use ERP Total']
+    # Filter the DataFrame to only include relevant columns and rows
+    df_filtered = df[df['EID'].isin(dab_multiplexes)][columns_to_keep + ['EID']]
+    # Pivot the DataFrame
+    df_pivot = df_filtered.pivot(index='NGR', columns='EID', values=columns_to_keep)
+    # Rename columns
+    df_pivot.columns = [f'{col[1]}_{col[0]}' for col in df_pivot.columns]
+    # Reset index
+    df_pivot.reset_index(inplace=True)
+    return df_pivot
 
 def generate_summary_stats(df, dab_multiplexes):
     """Calculate the mean, median, and mode of Power(kW)
@@ -93,6 +104,24 @@ def generate_summary_stats(df, dab_multiplexes):
         print(f"Median Power(kW) where the year is greater than or equal to 2001: {date_power_median}")
         print(f"Mode Power(kW) where the year is greater than or equal to 2001: {date_power_mode}")
         print('hold')
+    return df
+
+def clean_data(df):
+    """Standardise values and remove anomalies"""
+    # Strip extra whitespace from column names
+    df.columns = [col.strip() for col in df.columns]
+    # Remove '- DAB' from the end of Site values
+    df['Site'] = df['Site'].str.replace('- DAB', '')
+    # Remove commas from Power column
+    df['In-Use ERP Total'] = df['In-Use ERP Total'].str.replace(',', '')
+    for col in df.columns:
+        # Remove extra whitespace from values
+        df[col] = df[col].str.replace(r'\s+', ' ').str.strip()
+        # Convert all values to upper case
+        df[col] = df[col].str.upper()
+        # Format date column to get date without time
+    #TODO try except this
+    df['Date'] = pd.to_datetime(df['Date'], dayfirst=True)
     return df
 
 def generate_graph(df, dab_multiplexes):
@@ -128,8 +157,6 @@ def handler(antenna_path, params_path):
         print(f'Decoding error when reading Params dataset:\n{error}')
         # df_params = pd.read_csv(params_path, dtype='str', encoding='latin-1')
         df_params = custom_decode(params_path)
-    df_antenna.columns = [col.strip() for col in df_antenna.columns]
-    df_params.columns = [col.strip() for col in df_params.columns]
 
     # Merge the antennas and params dataframes on id
     df = df_antenna.merge(df_params, how='left', on='id', validate='1:1')
@@ -138,16 +165,15 @@ def handler(antenna_path, params_path):
     # Duplicates have undesirable impacts on visualisations
     df = df.drop_duplicates()
 
-    # Format date column to get date without time
-    #TODO try except this
-    df['Date'] = pd.to_datetime(df['Date'], dayfirst=True)
-
+    # Standardise values and general cleaning
+    df = clean_data(df)
     # Remove records with NGR: 'NZ02553847', 'SE213515', 'NT05399374', 'NT25265908'
     df = remove_invalid_stations(df)
 
     # Instantiate tuple of required DAB multiplexes
     dab_multiplexes = ('C18A', 'C18F', 'C188')
     df = wrangle_dab_multiplex(df, dab_multiplexes)
+
 
     df = generate_summary_stats(df, dab_multiplexes)
     print('hold')
@@ -158,6 +184,6 @@ def handler(antenna_path, params_path):
 
 
 if __name__ == '__main__':
-    antenna_path = r'C:\Computer Science\Advanced Programming\Summative\Data sets/TxAntennaDAB.csv'
-    params_path = r'C:\Computer Science\Advanced Programming\Summative\Data sets/TxParamsDAB.csv'
+    antenna_path = r'C:\Users\jbrou\Advanced Programming\OL6 AP 2223 Data sets\Data sets/TxAntennaDAB.csv'
+    params_path = r'C:\Users\jbrou\Advanced Programming\OL6 AP 2223 Data sets\Data sets/TxParamsDAB.csv'
     handler(antenna_path, params_path)
