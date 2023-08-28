@@ -120,8 +120,15 @@ def clean_data(df):
         # Convert all values to upper case
         df[col] = df[col].str.upper()
         # Format date column to get date without time
-    #TODO try except this
-    df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
+    # Parse dates - assume British %d/%m/%Y format
+    try:
+        df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
+    except ValueError:
+        try:
+            # Allow dashes
+            df['Date'] = pd.to_datetime(df['Date'], format='%d-%m-%Y')
+        except ValueError as e:
+            print(f'Unsupported date format: {e}')
     return df
 
 def generate_graph(df, dab_multiplexes):
