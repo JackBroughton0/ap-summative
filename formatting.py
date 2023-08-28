@@ -141,7 +141,6 @@ You will need to select an appropriate visualisation to demonstrate this."""
 
 def handler(antenna_path, params_path):
     """Main function oversees the data formatting process"""
-    #TODO set up git repo to track changes
     # Read in raw data sets, assume UTF-8 encoding
     try:
         df_antenna = pd.read_csv(antenna_path, dtype='str')
@@ -167,6 +166,12 @@ def handler(antenna_path, params_path):
 
     # Standardise values and general cleaning
     df = clean_data(df)
+
+    #TODO CREATE 3 MONGODB COLLECTIONS:
+    #TODO STORE ALL ORIGINAL DATA IN MONGODB for data integrity
+    #TODO STORE ALL CLEAN DATA IN MONGODB for data integrity
+    #TODO STORE RECORDS REQUIRED FOR VISUALISATIONS IN MONGODB for processing speed
+
     # Remove records with NGR: 'NZ02553847', 'SE213515', 'NT05399374', 'NT25265908'
     df = remove_invalid_stations(df)
 
