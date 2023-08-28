@@ -121,7 +121,7 @@ def clean_data(df):
         df[col] = df[col].str.upper()
         # Format date column to get date without time
     #TODO try except this
-    df['Date'] = pd.to_datetime(df['Date'], dayfirst=True)
+    df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
     return df
 
 def generate_graph(df, dab_multiplexes):
