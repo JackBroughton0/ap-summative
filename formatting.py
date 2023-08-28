@@ -120,8 +120,9 @@ def clean_data(df):
         # Convert all values to upper case
         df[col] = df[col].str.upper()
         # Format date column to get date without time
-    # Parse dates - assume British %d/%m/%Y format
+    # Parse dates
     try:
+        # Try the expected British format
         df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
     except ValueError:
         try:
