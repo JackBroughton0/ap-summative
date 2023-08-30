@@ -86,6 +86,7 @@ def clean_data(df):
     df = df.drop_duplicates()
     # Strip extra whitespace from column names
     df.columns = [col.strip() for col in df.columns]
+    df = df.rename({'Freq.': 'Freq'}, axis=1)
     # Remove '- DAB' from the end of Site values
     df['Site'] = df['Site'].str.replace('- DAB', '')
     # Remove commas from Power column
