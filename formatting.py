@@ -123,7 +123,8 @@ def wrangle_dab_multiplex(df):
 def get_output_columns(df):
     """Remove columns that are not required for output"""
     # Rename columns according to client brief
-    df = df.rename({'': '', '': ''}, axis=1)
+    df = df.rename({'In-Use Ae Ht': 'Aerial height(m)',
+                    'In-Use ERP Total': 'Power(kW)'}, axis=1)
     # Instantiate list of columns required for output
     keep_cols = ['id', 'NGR', 'Site', 'Site Height']
     # Get subset of dataframe with required columns
