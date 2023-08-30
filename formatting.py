@@ -64,35 +64,25 @@ def get_raw_data(antenna_path, params_path):
 
     # Merge the antennas and params dataframes on id
     df = df_antenna.merge(df_params, how='left', on='id', validate='1:1')
-
-    # Only now that data has been merged, check for duplicates
-    # Duplicates have undesirable impacts on visualisations
-    df = df.drop_duplicates()
     return df
 
-def remove_invalid_stations(df):
-    """Remove DAB Radio stations that have invalid NGR"""
-    # Specify invalid NGRs to drop records
-    invalid_ngr = ('NZ02553847', 'SE213515', 'NT05399374', 'NT25265908')
-    df_filtered = df[~df['NGR'].isin(invalid_ngr)].reset_index()
-    return df_filtered
-
-def wrangle_dab_multiplex(df):
-    """Extract DAB multiplexes C18A, C18F and C188 into their own columns.
-    Then join each of these categories to the NGR that signifies the DAB
-    stations location to the following: Site, Site Height, In-Use Ae Ht, In-Use ERP Total"""
-    # Instantiate list of columns to join values
-    # cols_to_join = ['EID', 'NGR', 'Site', 'Site Height', 'In-Use Ae Ht', 'In-Use ERP Total']
-    # Instantiate tuple of required DAB multiplexes
-    dab_multiplexes = ('C18A', 'C18F', 'C188')
-    # Create a binary column indicating the presence of each multiplex
-    for multiplex in dab_multiplexes:
-        df[multiplex] = df["EID"].apply(lambda x: int(x == multiplex))
-    print('hold')
+def format_dates(df):
+    """Format the date column by parsing to datetime"""
+    try:
+        # Try the expected British format
+        df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
+    except ValueError:
+        try:
+            # Allow dashes
+            df['Date'] = pd.to_datetime(df['Date'], format='%d-%m-%Y')
+        except ValueError as e:
+            print(f'Unsupported date format: {e}')
     return df
 
 def clean_data(df):
     """Standardise values and remove anomalies"""
+    # Duplicates have undesirable impacts on visualisations
+    df = df.drop_duplicates()
     # Strip extra whitespace from column names
     df.columns = [col.strip() for col in df.columns]
     # Remove '- DAB' from the end of Site values
@@ -106,15 +96,25 @@ def clean_data(df):
         df[col] = df[col].str.upper()
         # Format date column to get date without time
     # Parse dates
-    try:
-        # Try the expected British format
-        df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
-    except ValueError:
-        try:
-            # Allow dashes
-            df['Date'] = pd.to_datetime(df['Date'], format='%d-%m-%Y')
-        except ValueError as e:
-            print(f'Unsupported date format: {e}')
+    df = format_dates(df)
+    return df
+
+def remove_invalid_stations(df):
+    """Remove DAB Radio stations that have invalid NGR"""
+    # Specify invalid NGRs to drop records
+    invalid_ngr = ('NZ02553847', 'SE213515', 'NT05399374', 'NT25265908')
+    df_filtered = df[~df['NGR'].isin(invalid_ngr)].reset_index()
+    return df_filtered
+
+def wrangle_dab_multiplex(df):
+    """Extract DAB multiplexes C18A, C18F and C188 into their own columns.
+    Then join each of these categories to the NGR that signifies the DAB
+    stations location to the following: Site, Site Height, In-Use Ae Ht, In-Use ERP Total"""
+    # Instantiate tuple of required DAB multiplexes
+    dab_multiplexes = ('C18A', 'C18F', 'C188')
+    # Create a binary column indicating the presence of each multiplex
+    for multiplex in dab_multiplexes:
+        df[multiplex] = df["EID"].apply(lambda x: int(x == multiplex))
     return df
 
 def format_json(df):
