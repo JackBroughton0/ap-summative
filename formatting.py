@@ -74,8 +74,8 @@ def wrangle_dab_multiplex(df):
     df_pivot = df_filtered.pivot(index='NGR', columns='EID', values=columns_to_keep)
     # Rename columns
     df_pivot.columns = [f'{col[1]}_{col[0]}' for col in df_pivot.columns]
-    # Reset index
-    df_pivot.reset_index(inplace=True)
+    # Reset index and drop NGR column
+    df_pivot.reset_index(drop=True, inplace=True)
     return df_pivot
 
 def clean_data(df):
