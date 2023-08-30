@@ -42,9 +42,10 @@ def custom_decode(file_path):
 
 def get_raw_data(antenna_path, params_path):
     """Get the raw data"""
-    # Read in raw data sets, assume UTF-8 encoding
+    # Instantiate list of required columns from antenna data
     antenna_cols = ['id', 'NGR', 'Site Height',
                     'In-Use Ae Ht', 'In-Use ERP Total']
+    # Read in raw data sets, assume UTF-8 encoding
     try:
         df_antenna = pd.read_csv(antenna_path, usecols=antenna_cols,
                                  dtype='str')
