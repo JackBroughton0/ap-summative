@@ -215,21 +215,17 @@ def handler(antenna_path, params_path):
     df = clean_data(df)
     # Remove records with NGR: 'NZ02553847', 'SE213515', 'NT05399374', 'NT25265908'
     df = remove_invalid_stations(df)
-
     # Extract records with DAB multiplexes: 'C18A', 'C18F' and 'C188'
     df = wrangle_dab_multiplex(df)
     # Get subset of dataframe with required columns
     df_out = get_output_columns(df)
-
     # Establish a connection to the MongoDB server
     client = pymongo.MongoClient("mongodb://localhost:27017/")
-    upload_to_mongo(df, client)
+    upload_to_mongo(df_out, client)
+
     # df = retrieve_from_mongo(client)
-
     df = generate_summary_stats(df)
-    print('hold')
     generate_graph(df)
-
     generate_corr_graph(df)
 
 
