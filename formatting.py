@@ -47,7 +47,7 @@ def remove_invalid_stations(df):
     df_filtered = df[~df['NGR'].isin(invalid_ngr)].reset_index()
     return df_filtered
 
-def wrangle_dab_multiplex(df, dab_multiplexes):
+def wrangle_dab_multiplex(df):
     """Extract DAB multiplexes C18A, C18F and C188 into their own columns.
     Then join each of these categories to the NGR that signifies the DAB
     stations location to the following: Site, Site Height, In-Use Ae Ht, In-Use ERP Total"""
@@ -64,7 +64,9 @@ def wrangle_dab_multiplex(df, dab_multiplexes):
     # df = df.rename({'In-Use Ae Ht': 'Aerial height(m)',
     #                  'In-Use ERP Total': 'Power(kW)'}, axis=1)
     # return df
-    # Define the DAB multiplexes and columns to keep
+    # Instantiate tuple of required DAB multiplexes
+    dab_multiplexes = ('C18A', 'C18F', 'C188')
+    # Instantiate list of columns to keep
     columns_to_keep = ['NGR', 'Site', 'Site Height', 'In-Use Ae Ht', 'In-Use ERP Total']
     # Filter the DataFrame to only include relevant columns and rows
     df_filtered = df[df['EID'].isin(dab_multiplexes)][columns_to_keep + ['EID']]
@@ -75,37 +77,6 @@ def wrangle_dab_multiplex(df, dab_multiplexes):
     # Reset index
     df_pivot.reset_index(inplace=True)
     return df_pivot
-
-def generate_summary_stats(df, dab_multiplexes):
-    """Calculate the mean, median, and mode of Power(kW)
-    for the C18A, C18F, C188 DAB multiplexes"""
-    # Type cast relevant columns to allow descriptive statistics calculations
-    df['Site Height'] = df['Site Height'].astype('int')
-    df['Power(kW)'] = df['Power(kW)'].str.replace(',', '').astype('float')
-
-    for multiplex in dab_multiplexes:
-        site_height_mask = (df['EID']==multiplex) & (df['Site Height'] > 75)
-        date_mask = (df['EID']==multiplex) & (df['Date'].dt.year >= 2001)
-
-        # Get mean, median, and mode where site height is greater than 75
-        site_ht_power_mean = df.loc[site_height_mask]['Power(kW)'].mean()
-        site_ht_power_median = df.loc[site_height_mask]['Power(kW)'].median()
-        site_ht_power_mode = df.loc[site_height_mask]['Power(kW)'].mode()[0]
-
-        # Get mean, median, and mode where the year is greater than or equal to 2001
-        date_power_mean = df.loc[date_mask]['Power(kW)'].mean()
-        date_power_median = df.loc[date_mask]['Power(kW)'].median()
-        date_power_mode = df.loc[date_mask]['Power(kW)'].mode()[0]
-
-        # Display the results
-        print(f"Mean Power(kW) where site height is greater than 75: {site_ht_power_mean}")
-        print(f"Median Power(kW) where site height is greater than 75: {site_ht_power_median}")
-        print(f"Mode Power(kW) where site height is greater than 75: {site_ht_power_mode}")
-        print(f"Mean Power(kW) where the year is greater than or equal to 2001: {date_power_mean}")
-        print(f"Median Power(kW) where the year is greater than or equal to 2001: {date_power_median}")
-        print(f"Mode Power(kW) where the year is greater than or equal to 2001: {date_power_mode}")
-        print('hold')
-    return df
 
 def clean_data(df):
     """Standardise values and remove anomalies"""
@@ -148,15 +119,45 @@ def retrieve_from_mongo(client):
     This will be the input data for data visualisations"""
     # df = 
     # return df
+def generate_summary_stats(df):
+    """Calculate the mean, median, and mode of Power(kW)
+    for the C18A, C18F, C188 DAB multiplexes"""
+    # Type cast relevant columns to allow descriptive statistics calculations
+    df['Site Height'] = df['Site Height'].astype('int')
+    df['Power(kW)'] = df['Power(kW)'].str.replace(',', '').astype('float')
 
-def generate_graph(df, dab_multiplexes):
+    for multiplex in df['EID'].unique():
+        site_height_mask = (df['EID']==multiplex) & (df['Site Height'] > 75)
+        date_mask = (df['EID']==multiplex) & (df['Date'].dt.year >= 2001)
+
+        # Get mean, median, and mode where site height is greater than 75
+        site_ht_power_mean = df.loc[site_height_mask]['Power(kW)'].mean()
+        site_ht_power_median = df.loc[site_height_mask]['Power(kW)'].median()
+        site_ht_power_mode = df.loc[site_height_mask]['Power(kW)'].mode()[0]
+
+        # Get mean, median, and mode where the year is greater than or equal to 2001
+        date_power_mean = df.loc[date_mask]['Power(kW)'].mean()
+        date_power_median = df.loc[date_mask]['Power(kW)'].median()
+        date_power_mode = df.loc[date_mask]['Power(kW)'].mode()[0]
+
+        # Display the results
+        print(f"Mean Power(kW) where site height is greater than 75: {site_ht_power_mean}")
+        print(f"Median Power(kW) where site height is greater than 75: {site_ht_power_median}")
+        print(f"Mode Power(kW) where site height is greater than 75: {site_ht_power_mode}")
+        print(f"Mean Power(kW) where the year is greater than or equal to 2001: {date_power_mean}")
+        print(f"Median Power(kW) where the year is greater than or equal to 2001: {date_power_median}")
+        print(f"Mode Power(kW) where the year is greater than or equal to 2001: {date_power_mode}")
+        print('hold')
+    return df
+
+def generate_graph(df):
     """4.	Produce a suitable graph that display the following information from the
 three DAB multiplexes that you extracted earlier: C18A, C18F, C188:
 Site, Freq, Block, Serv Label1, Serv Label2, Serv Label3, Serv label4, Serv Label10 
 You may need to consider how you group this data to make visualisation feasible.
 """
 
-def generate_corr_graph(df, dab_multiplexes):
+def generate_corr_graph(df):
     """5.	Determine if there is any significant correlation between the
 Freq, Block, Serv Label1, Serv Label2, Serv Label3, Serv label4,Serv Label10 
 used by the extracted DAB stations.  
@@ -195,20 +196,18 @@ def handler(antenna_path, params_path):
     # Remove records with NGR: 'NZ02553847', 'SE213515', 'NT05399374', 'NT25265908'
     df = remove_invalid_stations(df)
 
-    # Instantiate tuple of required DAB multiplexes
-    dab_multiplexes = ('C18A', 'C18F', 'C188')
-    df = wrangle_dab_multiplex(df, dab_multiplexes)
+    df = wrangle_dab_multiplex(df)
 
     # Establish a connection to the MongoDB server
     client = pymongo.MongoClient("mongodb://localhost:27017/")
     upload_to_mongo(df, client)
     # df = retrieve_from_mongo(client)
 
-    df = generate_summary_stats(df, dab_multiplexes)
+    df = generate_summary_stats(df)
     print('hold')
-    generate_graph(df, dab_multiplexes)
+    generate_graph(df)
 
-    generate_corr_graph(df, dab_multiplexes)
+    generate_corr_graph(df)
 
 
 
