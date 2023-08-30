@@ -108,15 +108,27 @@ def remove_invalid_stations(df):
     return df_filtered
 
 def wrangle_dab_multiplex(df):
-    """Extract DAB multiplexes C18A, C18F and C188 into their own columns.
-    Then join each of these categories to the NGR that signifies the DAB
-    stations location to the following: Site, Site Height, In-Use Ae Ht, In-Use ERP Total"""
-    # Instantiate tuple of required DAB multiplexes
-    dab_multiplexes = ('C18A', 'C18F', 'C188')
+    """Extract DAB multiplex blocks C18A, C18F and C188 into
+      their own columns and drop records that don't have
+      these EID values"""
+    # Instantiate list of required DAB multiplexes
+    dab_multiplexes = ['C18A', 'C18F', 'C188']
     # Create a binary column indicating the presence of each multiplex
     for multiplex in dab_multiplexes:
         df[multiplex] = df["EID"].apply(lambda x: int(x == multiplex))
-    return df
+    # Remove records not in the list of EIDs required for output
+    df_out = df[df[dab_multiplexes].any(axis=1)]
+    return df_out
+
+def get_output_columns(df):
+    """Remove columns that are not required for output"""
+    # Rename columns according to client brief
+    df = df.rename({'': '', '': ''}, axis=1)
+    # Instantiate list of columns required for output
+    keep_cols = ['id', 'NGR', 'Site', 'Site Height']
+    # Get subset of dataframe with required columns
+    df_out = df[keep_cols]
+    return df_out
 
 def format_json(df):
     """Convert data into a dictionary ready to accurately
@@ -205,8 +217,9 @@ def handler(antenna_path, params_path):
     df = remove_invalid_stations(df)
 
     # Extract records with DAB multiplexes: 'C18A', 'C18F' and 'C188'
-    # Remove columns not required for visualisations
     df = wrangle_dab_multiplex(df)
+    # Get subset of dataframe with required columns
+    df_out = get_output_columns(df)
 
     # Establish a connection to the MongoDB server
     client = pymongo.MongoClient("mongodb://localhost:27017/")
