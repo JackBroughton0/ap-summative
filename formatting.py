@@ -126,7 +126,10 @@ def get_output_columns(df):
     df = df.rename({'In-Use Ae Ht': 'Aerial height(m)',
                     'In-Use ERP Total': 'Power(kW)'}, axis=1)
     # Instantiate list of columns required for output
-    keep_cols = ['id', 'NGR', 'Site', 'Site Height']
+    keep_cols = ['id', 'NGR', 'C18A', 'C18F', 'C188', 'Site', 'Site Height',
+                 'Aerial height(m)', 'Power(kW)', 'Date', 'Freq',
+                 'Block', 'Serv Label1', 'Serv Label2', 'Serv Label3',
+                 'Serv Label4', 'Serv Label10']
     # Get subset of dataframe with required columns
     df_out = df[keep_cols]
     return df_out
