@@ -40,6 +40,36 @@ def custom_decode(file_path):
         raise pd.errors.ParserError("Failed to read the dataset")
     return df
 
+def get_raw_data(antenna_path, params_path):
+    """Get the raw data"""
+    # Read in raw data sets, assume UTF-8 encoding
+    antenna_cols = ['id', 'NGR', 'Site Height',
+                    'In-Use Ae Ht', 'In-Use ERP Total']
+    try:
+        df_antenna = pd.read_csv(antenna_path, usecols=antenna_cols,
+                                 dtype='str')
+    except UnicodeDecodeError:
+        print(f'Decoding error when reading Antenna dataset:\n{error}')
+        df_antenna = pd.read_csv(antenna_path, usecols=antenna_cols,
+                                 dtype='str', encoding='latin-1')
+        # df_antenna = custom_decode(antenna_path)
+    # Params contains an 'invalid continuation byte'
+    # 0xe0 is an invalid continuation byte since it starts with the bit pattern 111 rather than 10
+    try:
+        df_params = pd.read_csv(params_path, dtype='str')
+    except UnicodeDecodeError as error:
+        print(f'Decoding error when reading Params dataset:\n{error}')
+        # df_params = pd.read_csv(params_path, dtype='str', encoding='latin-1')
+        df_params = custom_decode(params_path)
+
+    # Merge the antennas and params dataframes on id
+    df = df_antenna.merge(df_params, how='left', on='id', validate='1:1')
+
+    # Only now that data has been merged, check for duplicates
+    # Duplicates have undesirable impacts on visualisations
+    df = df.drop_duplicates()
+    return df
+
 def remove_invalid_stations(df):
     """Remove DAB Radio stations that have invalid NGR"""
     # Specify invalid NGRs to drop records
@@ -51,36 +81,14 @@ def wrangle_dab_multiplex(df):
     """Extract DAB multiplexes C18A, C18F and C188 into their own columns.
     Then join each of these categories to the NGR that signifies the DAB
     stations location to the following: Site, Site Height, In-Use Ae Ht, In-Use ERP Total"""
-    # # Instantiate list of columns to join values
+    # Instantiate list of columns to join values
     # cols_to_join = ['EID', 'NGR', 'Site', 'Site Height', 'In-Use Ae Ht', 'In-Use ERP Total']
-    # # df[f'DAB_multiplex'] = np.where(df['EID'].isin(dab_multiplexes), df['EID'], '')
-    # for multiplex in dab_multiplexes:
-    #     # Create a new column for each DAB multiplex
-    #     df[f'DAB_{multiplex}'] = np.where(
-    #         df['EID'] == multiplex,
-    #         df[cols_to_join].apply(lambda row: ' | '.join(row.astype(str).str.strip()), axis=1),
-    #         ''
-    #     )
-    # df = df.rename({'In-Use Ae Ht': 'Aerial height(m)',
-    #                  'In-Use ERP Total': 'Power(kW)'}, axis=1)
-    # return df
     # Instantiate tuple of required DAB multiplexes
     dab_multiplexes = ('C18A', 'C18F', 'C188')
     # Create a binary column indicating the presence of each multiplex
     for multiplex in dab_multiplexes:
         df[multiplex] = df["EID"].apply(lambda x: int(x == multiplex))
     print('hold')
-    # Only need NGR, Site Height, In-Use Ae Ht, In-Use ERP Total from antenna data set
-    # # Instantiate list of columns to keep
-    # columns_to_keep = ['NGR', 'Site', 'Site Height', 'In-Use Ae Ht', 'In-Use ERP Total']
-    # # Filter the DataFrame to only include relevant columns and rows
-    # df_filtered = df[df['EID'].isin(dab_multiplexes)][columns_to_keep + ['EID']]
-    # # Pivot the DataFrame
-    # df_pivot = df_filtered.pivot(index='NGR', columns='EID', values=columns_to_keep)
-    # # Rename columns
-    # df_pivot.columns = [f'{col[1]}_{col[0]}' for col in df_pivot.columns]
-    # # Reset index and drop NGR column
-    # df_pivot.reset_index(drop=True, inplace=True)
     return df
 
 def clean_data(df):
@@ -188,39 +196,15 @@ You will need to select an appropriate visualisation to demonstrate this."""
 
 def handler(antenna_path, params_path):
     """Main function oversees the data formatting process"""
-    # Read in raw data sets, assume UTF-8 encoding
-    antenna_cols =['id', 'NGR', 'Site Height',
-                   'In-Use Ae Ht', 'In-Use ERP Total']
-    try:
-        df_antenna = pd.read_csv(antenna_path, usecols=antenna_cols,
-                                 dtype='str')
-    except UnicodeDecodeError:
-        print(f'Decoding error when reading Antenna dataset:\n{error}')
-        df_antenna = pd.read_csv(antenna_path, usecols=antenna_cols,
-                                 dtype='str', encoding='latin-1')
-        # df_antenna = custom_decode(antenna_path)
-    # Params contains an 'invalid continuation byte'
-    # 0xe0 is an invalid continuation byte since it starts with the bit pattern 111 rather than 10
-    try:
-        df_params = pd.read_csv(params_path, dtype='str')
-    except UnicodeDecodeError as error:
-        print(f'Decoding error when reading Params dataset:\n{error}')
-        # df_params = pd.read_csv(params_path, dtype='str', encoding='latin-1')
-        df_params = custom_decode(params_path)
-
-    # Merge the antennas and params dataframes on id
-    df = df_antenna.merge(df_params, how='left', on='id', validate='1:1')
-
-    # Only now that data has been merged, check for duplicates
-    # Duplicates have undesirable impacts on visualisations
-    df = df.drop_duplicates()
-
+    # Read in raw csvs and merge data sets on id
+    df = get_raw_data(antenna_path, params_path)
     # Standardise values and general cleaning
     df = clean_data(df)
-
     # Remove records with NGR: 'NZ02553847', 'SE213515', 'NT05399374', 'NT25265908'
     df = remove_invalid_stations(df)
 
+    # Extract records with DAB multiplexes: 'C18A', 'C18F' and 'C188'
+    # Remove columns not required for visualisations
     df = wrangle_dab_multiplex(df)
 
     # Establish a connection to the MongoDB server
