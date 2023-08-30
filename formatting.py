@@ -66,17 +66,22 @@ def wrangle_dab_multiplex(df):
     # return df
     # Instantiate tuple of required DAB multiplexes
     dab_multiplexes = ('C18A', 'C18F', 'C188')
-    # Instantiate list of columns to keep
-    columns_to_keep = ['NGR', 'Site', 'Site Height', 'In-Use Ae Ht', 'In-Use ERP Total']
-    # Filter the DataFrame to only include relevant columns and rows
-    df_filtered = df[df['EID'].isin(dab_multiplexes)][columns_to_keep + ['EID']]
-    # Pivot the DataFrame
-    df_pivot = df_filtered.pivot(index='NGR', columns='EID', values=columns_to_keep)
-    # Rename columns
-    df_pivot.columns = [f'{col[1]}_{col[0]}' for col in df_pivot.columns]
-    # Reset index and drop NGR column
-    df_pivot.reset_index(drop=True, inplace=True)
-    return df_pivot
+    # Create a binary column indicating the presence of each multiplex
+    for multiplex in dab_multiplexes:
+        df[multiplex] = df["EID"].apply(lambda x: int(x == multiplex))
+    print('hold')
+    # Only need NGR, Site Height, In-Use Ae Ht, In-Use ERP Total from antenna data set
+    # # Instantiate list of columns to keep
+    # columns_to_keep = ['NGR', 'Site', 'Site Height', 'In-Use Ae Ht', 'In-Use ERP Total']
+    # # Filter the DataFrame to only include relevant columns and rows
+    # df_filtered = df[df['EID'].isin(dab_multiplexes)][columns_to_keep + ['EID']]
+    # # Pivot the DataFrame
+    # df_pivot = df_filtered.pivot(index='NGR', columns='EID', values=columns_to_keep)
+    # # Rename columns
+    # df_pivot.columns = [f'{col[1]}_{col[0]}' for col in df_pivot.columns]
+    # # Reset index and drop NGR column
+    # df_pivot.reset_index(drop=True, inplace=True)
+    return df
 
 def clean_data(df):
     """Standardise values and remove anomalies"""
@@ -104,8 +109,23 @@ def clean_data(df):
             print(f'Unsupported date format: {e}')
     return df
 
-def upload_to_mongo(df, client):
+def format_json(df):
+    """Convert data into a dictionary ready to accurately
+    upload to the radio_data MongoDB database"""
+    upload_dict = {}
+    for dab_multiplex in ('C18A', 'C18F', 'C188'):
+        df_multiplex = df[[col for col in df.columns if col.startswith(dab_multiplex)]]
+        df_multiplex = df_multiplex.dropna(how='all')
+        print('hold')        
+    return upload_dict
+
+def upload_to_mongo(df, client, formatted=False):
     """Upload the formatted data to MongoDB for later retrieval"""
+    if formatted:
+        # data has been read in by
+        df = pd.read_json()
+    else:
+        upload_dict = format_json(df)
     # Create a database
     db = client["radio_data"]
     #TODO STORE ONLY REQUIRED RECORDS REQUIRED FOR VISUALISATIONS IN MONGODB for processing speed
@@ -119,6 +139,7 @@ def retrieve_from_mongo(client):
     This will be the input data for data visualisations"""
     # df = 
     # return df
+
 def generate_summary_stats(df):
     """Calculate the mean, median, and mode of Power(kW)
     for the C18A, C18F, C188 DAB multiplexes"""
@@ -168,11 +189,15 @@ You will need to select an appropriate visualisation to demonstrate this."""
 def handler(antenna_path, params_path):
     """Main function oversees the data formatting process"""
     # Read in raw data sets, assume UTF-8 encoding
+    antenna_cols =['id', 'NGR', 'Site Height',
+                   'In-Use Ae Ht', 'In-Use ERP Total']
     try:
-        df_antenna = pd.read_csv(antenna_path, dtype='str')
+        df_antenna = pd.read_csv(antenna_path, usecols=antenna_cols,
+                                 dtype='str')
     except UnicodeDecodeError:
         print(f'Decoding error when reading Antenna dataset:\n{error}')
-        df_antenna = pd.read_csv(antenna_path, dtype='str', encoding='latin-1')
+        df_antenna = pd.read_csv(antenna_path, usecols=antenna_cols,
+                                 dtype='str', encoding='latin-1')
         # df_antenna = custom_decode(antenna_path)
     # Params contains an 'invalid continuation byte'
     # 0xe0 is an invalid continuation byte since it starts with the bit pattern 111 rather than 10
