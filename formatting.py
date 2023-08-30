@@ -4,6 +4,7 @@ import numpy as np
 import csv
 import json
 import unicodedata
+import pymongo
 
 
 
@@ -132,6 +133,22 @@ def clean_data(df):
             print(f'Unsupported date format: {e}')
     return df
 
+def upload_to_mongo(df, client):
+    """Upload the formatted data to MongoDB for later retrieval"""
+    # Create a database
+    db = client["radio_data"]
+    #TODO STORE ONLY REQUIRED RECORDS REQUIRED FOR VISUALISATIONS IN MONGODB for processing speed
+
+    # Create collections to store the formatted data
+    collection_clean = db["clean_merged_data"]
+    collection_required = db["visualisation_input"]
+
+def retrieve_from_mongo(client):
+    """Retrieve the cleaned and formatted data from MongoDB.
+    This will be the input data for data visualisations"""
+    # df = 
+    # return df
+
 def generate_graph(df, dab_multiplexes):
     """4.	Produce a suitable graph that display the following information from the
 three DAB multiplexes that you extracted earlier: C18A, C18F, C188:
@@ -175,11 +192,6 @@ def handler(antenna_path, params_path):
     # Standardise values and general cleaning
     df = clean_data(df)
 
-    #TODO CREATE 3 MONGODB COLLECTIONS:
-    #TODO STORE ALL ORIGINAL DATA IN MONGODB for data integrity
-    #TODO STORE ALL CLEAN DATA IN MONGODB for data integrity
-    #TODO STORE RECORDS REQUIRED FOR VISUALISATIONS IN MONGODB for processing speed
-
     # Remove records with NGR: 'NZ02553847', 'SE213515', 'NT05399374', 'NT25265908'
     df = remove_invalid_stations(df)
 
@@ -187,6 +199,10 @@ def handler(antenna_path, params_path):
     dab_multiplexes = ('C18A', 'C18F', 'C188')
     df = wrangle_dab_multiplex(df, dab_multiplexes)
 
+    # Establish a connection to the MongoDB server
+    client = pymongo.MongoClient("mongodb://localhost:27017/")
+    upload_to_mongo(df, client)
+    # df = retrieve_from_mongo(client)
 
     df = generate_summary_stats(df, dab_multiplexes)
     print('hold')
