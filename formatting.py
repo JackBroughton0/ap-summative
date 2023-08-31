@@ -96,9 +96,9 @@ def clean_data(df):
         df[col] = df[col].str.replace(r'\s+', ' ').str.strip()
         # Convert all values to upper case
         df[col] = df[col].str.upper()
-        # Format date column to get date without time
-    # Parse dates
-    df = format_dates(df)
+    # Convert dates to ISO format strings
+    # Keep as strings to allow json formatting
+    df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y').dt.strftime('%Y-%m-%d')
     return df
 
 def remove_invalid_stations(df):
@@ -138,27 +138,47 @@ def get_output_columns(df):
 def format_json(df):
     """Convert data into a dictionary ready to accurately
     upload to the radio_data MongoDB database"""
-    upload_dict = {}
-    for dab_multiplex in ('C18A', 'C18F', 'C188'):
-        df_multiplex = df[[col for col in df.columns if col.startswith(dab_multiplex)]]
-        df_multiplex = df_multiplex.dropna(how='all')
-        print('hold')        
-    return upload_dict
+    # Create a list to store the data
+    data = []
+    dab_multiplexes = ['C18A', 'C18F', 'C188']
+    # Iterate through each row in the DataFrame
+    for index, row in df.iterrows():
+        entry = {
+            'id': row['id'],
+            'NGR': row['NGR'],
+            'DAB_Multiplex': None,
+            'Site': row['Site'],
+            'Site Height': row['Site Height'],
+            'Aerial height(m)': row['Aerial height(m)'],
+            'Power(kW)': row['Power(kW)'],
+            'Date': row['Date'],
+            'Freq': row['Freq'],
+            'Block': row['Block'],
+            'Service Labels': {'Serv Label1': row['Serv Label1'],
+                                'Serv Label2': row['Serv Label2'],
+                                'Serv Label3': row['Serv Label3'],
+                                'Serv Label4': row['Serv Label4'],
+                                'Serv Label10': row['Serv Label10']}
+        }
+        # Determine the DAB multiplex and update the entry
+        for multiplex in dab_multiplexes:
+            if row[multiplex]:
+                entry['DAB_Multiplex'] = multiplex
+                break
+        data.append(entry)
+    # Convert the list of dictionaries to JSON
+    json_output = json.dumps(data)    
+    return json_output
 
-def upload_to_mongo(df, client, formatted=False):
+def upload_to_mongo(upload_data, client):
     """Upload the formatted data to MongoDB for later retrieval"""
-    if formatted:
-        # data has been read in by
-        df = pd.read_json()
-    else:
-        upload_dict = format_json(df)
     # Create a database
     db = client["radio_data"]
-    #TODO STORE ONLY REQUIRED RECORDS REQUIRED FOR VISUALISATIONS IN MONGODB for processing speed
-
     # Create collections to store the formatted data
-    collection_clean = db["clean_merged_data"]
-    collection_required = db["visualisation_input"]
+    collection_formatted = db["formatted_data"]
+    # Insert JSON data into the collection
+    collection_formatted.insert_many(upload_data)
+
 
 def retrieve_from_mongo(client):
     """Retrieve the cleaned and formatted data from MongoDB.
@@ -172,6 +192,8 @@ def generate_summary_stats(df):
     # Type cast relevant columns to allow descriptive statistics calculations
     df['Site Height'] = df['Site Height'].astype('int')
     df['Power(kW)'] = df['Power(kW)'].str.replace(',', '').astype('float')
+    # Parse dates
+    df = format_dates(df)
 
     for multiplex in df['EID'].unique():
         site_height_mask = (df['EID']==multiplex) & (df['Site Height'] > 75)
@@ -224,9 +246,11 @@ def handler(antenna_path, params_path):
     df = wrangle_dab_multiplex(df)
     # Get subset of dataframe with required columns
     df_out = get_output_columns(df)
+    # Convert the dataframe to json
+    upload_data = format_json(df_out)
     # Establish a connection to the MongoDB server
     client = pymongo.MongoClient("mongodb://localhost:27017/")
-    upload_to_mongo(df_out, client)
+    upload_to_mongo(upload_data, client)
 
     # df = retrieve_from_mongo(client)
     df = generate_summary_stats(df)
