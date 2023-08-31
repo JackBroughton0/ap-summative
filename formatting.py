@@ -114,9 +114,9 @@ def wrangle_dab_multiplex(df):
       these EID values"""
     # Instantiate list of required DAB multiplexes
     dab_multiplexes = ['C18A', 'C18F', 'C188']
-    # Create a binary column indicating the presence of each multiplex
+    # Create a column indicating the presence of each multiplex
     for multiplex in dab_multiplexes:
-        df[multiplex] = df["EID"].apply(lambda x: int(x == multiplex))
+        df[multiplex] = df["EID"].apply(lambda x: multiplex if x == multiplex else '')
     # Remove records not in the list of EIDs required for output
     df_out = df[df[dab_multiplexes].any(axis=1)]
     return df_out
