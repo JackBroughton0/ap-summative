@@ -98,9 +98,8 @@ def clean_data(df):
         df[col] = df[col].str.upper()
     # Remove spaces from NGR values
     df['NGR'] = df['NGR'].str.replace(' ', '')
-    # Convert dates to ISO format strings
-    # Keep as strings to allow json formatting
-    df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y').dt.strftime('%Y-%m-%d')
+    # Parse dates
+    df = format_dates(df)
     return df
 
 def remove_invalid_stations(df):
@@ -179,7 +178,6 @@ def upload_to_mongo(upload_data, client):
     # Insert JSON data into the collection
     collection_formatted.insert_many(upload_data)
 
-
 def retrieve_from_mongo(client):
     """Retrieve the cleaned and formatted data from MongoDB.
     This will be the input data for data visualisations"""
@@ -192,8 +190,6 @@ def generate_summary_stats(df):
     # Type cast relevant columns to allow descriptive statistics calculations
     df['Site Height'] = df['Site Height'].astype('int')
     df['Power(kW)'] = df['Power(kW)'].str.replace(',', '').astype('float')
-    # Parse dates
-    df = format_dates(df)
 
     for multiplex in df['EID'].unique():
         site_height_mask = (df['EID']==multiplex) & (df['Site Height'] > 75)
