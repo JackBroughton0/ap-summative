@@ -145,7 +145,7 @@ def format_json(df):
     # Iterate through each row in the DataFrame
     for index, row in df.iterrows():
         entry = {
-            'id': row['id'],
+            '_id': row['id'],
             'NGR': row['NGR'],
             'DAB_Multiplex': None,
             'Site': row['Site'],
@@ -166,7 +166,7 @@ def format_json(df):
             if row[multiplex]:
                 entry['DAB_Multiplex'] = multiplex
                 break
-        data.append(entry)  
+        data.append(entry)
     return data
 
 def upload_to_mongo(upload_data, client):
