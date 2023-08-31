@@ -89,13 +89,15 @@ def clean_data(df):
     df = df.rename({'Freq.': 'Freq'}, axis=1)
     # Remove '- DAB' from the end of Site values
     df['Site'] = df['Site'].str.replace('- DAB', '')
-    # Remove commas from Power column
+    # Remove commas from Power values
     df['In-Use ERP Total'] = df['In-Use ERP Total'].str.replace(',', '')
     for col in df.columns:
         # Remove extra whitespace from values
         df[col] = df[col].str.replace(r'\s+', ' ').str.strip()
         # Convert all values to upper case
         df[col] = df[col].str.upper()
+    # Remove spaces from NGR values
+    df['NGR'] = df['NGR'].str.replace(' ', '')
     # Convert dates to ISO format strings
     # Keep as strings to allow json formatting
     df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y').dt.strftime('%Y-%m-%d')
@@ -165,10 +167,8 @@ def format_json(df):
             if row[multiplex]:
                 entry['DAB_Multiplex'] = multiplex
                 break
-        data.append(entry)
-    # Convert the list of dictionaries to JSON
-    json_output = json.dumps(data)    
-    return json_output
+        data.append(entry)  
+    return data
 
 def upload_to_mongo(upload_data, client):
     """Upload the formatted data to MongoDB for later retrieval"""
