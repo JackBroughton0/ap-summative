@@ -3,7 +3,14 @@ import pandas as pd
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
+import formatting
+import manage_mongo
+import visualisations
 
+
+class MyApplication:
+    def __init__(self, root):
+        self.root = root
 
 def get_user_file():
     """Read the user input csv"""
