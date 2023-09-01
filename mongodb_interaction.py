@@ -1,5 +1,6 @@
 import pymongo
 import pandas as pd
+import numpy as np
 from pandas import json_normalize
 
 
@@ -10,7 +11,7 @@ def upload_to_mongo(collection, upload_data):
 
 
 def clean_column_name(column_name):
-    # Remove the prefixes and dots
+    """Remove prefixes from column names"""
     cleaned_name = column_name.replace('Service Labels.', '').replace('Site Info.', '')
     return cleaned_name
 
@@ -18,10 +19,15 @@ def clean_column_name(column_name):
 def retrieve_from_mongo(collection):
     """Retrieve the cleaned and formatted data from MongoDB.
     This will be the input data for data visualisations"""
+    # Get all the documents stored in the MongoDB collection
     all_documents = collection.find({})
     document_list = list(all_documents)
+    # Convert list of dictionaries into a dataframe
     df = json_normalize(document_list)
+    # Remove prefixes where the data was stored in a nested dictionary
     df.columns = [clean_column_name(col) for col in df.columns]
+    # Replace None with more intuitive np.nan
+    df = df.fillna(value=np.nan)
     return df
 
 
@@ -33,10 +39,4 @@ def connect_to_mongodb():
     db = client["radio_data"]
     collection = db["formatted_data"]
     return collection
-
-
-if __name__ == '__main__':
-    collection = connect_to_mongodb()
-    df = retrieve_from_mongo(collection)
-    print('hold')
 
