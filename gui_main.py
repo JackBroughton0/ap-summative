@@ -109,5 +109,5 @@ def handler():
     window.mainloop()
 
 if __name__ == '__main__':
-    os.chdir('Formative')
+    os.chdir('AP-SUMMATIVE')
     handler()
