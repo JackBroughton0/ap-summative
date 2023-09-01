@@ -4,8 +4,6 @@ import numpy as np
 import csv
 import json
 import unicodedata
-import pymongo
-
 
 
 def custom_decode(file_path):
@@ -181,20 +179,7 @@ def format_json(df):
         data.append(entry)
     return data
 
-def upload_to_mongo(upload_data, client):
-    """Upload the formatted data to MongoDB for later retrieval"""
-    # Create a database
-    db = client["radio_data"]
-    # Create collections to store the formatted data
-    collection_formatted = db["formatted_data"]
-    # Insert JSON data into the collection
-    collection_formatted.insert_many(upload_data)
 
-def retrieve_from_mongo(client):
-    """Retrieve the cleaned and formatted data from MongoDB.
-    This will be the input data for data visualisations"""
-    # df = 
-    # return df
 
 def generate_summary_stats(df):
     """Calculate the mean, median, and mode of Power(kW)
@@ -256,11 +241,6 @@ def handler(antenna_path, params_path):
     df_out = get_output_columns(df)
     # Convert the dataframe to json
     upload_data = format_json(df_out)
-    # Establish a connection to the MongoDB server
-    client = pymongo.MongoClient("mongodb://localhost:27017/")
-    upload_to_mongo(upload_data, client)
-
-    # df = retrieve_from_mongo(client)
     df = generate_summary_stats(df)
     generate_graph(df)
     generate_corr_graph(df)

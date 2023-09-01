@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
 import formatting
-import manage_mongo
+import mongodb_interaction
 import visualisations
 
 
