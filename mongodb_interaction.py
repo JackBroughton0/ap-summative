@@ -6,12 +6,14 @@ def upload_to_mongo(collection, upload_data):
     # Insert JSON data into the collection
     collection.insert_many(upload_data)
 
+
 def retrieve_from_mongo(collection):
     """Retrieve the cleaned and formatted data from MongoDB.
     This will be the input data for data visualisations"""
     all_documents = collection.find({})
     # df = 
     # return df
+
 
 def connect_to_mongodb():
     """Connect to the Mongodb server and return the

@@ -38,6 +38,7 @@ def custom_decode(file_path):
         raise pd.errors.ParserError("Failed to read the dataset")
     return df
 
+
 def get_raw_data(antenna_path, params_path):
     """Get the raw data"""
     # Instantiate list of required columns from antenna data
@@ -65,6 +66,7 @@ def get_raw_data(antenna_path, params_path):
     df = df_antenna.merge(df_params, how='left', on='id', validate='1:1')
     return df
 
+
 def format_dates(df):
     """Format the date column by parsing to datetime"""
     try:
@@ -77,6 +79,7 @@ def format_dates(df):
         except ValueError as e:
             print(f'Unsupported date format: {e}')
     return df
+
 
 def type_cast(df):
     """Cast the data types of the columns required
@@ -91,6 +94,7 @@ def type_cast(df):
     df['In-Use ERP Total'] = df['In-Use ERP Total'].astype(float)
     df['Freq'] = df['Freq'].astype(float)
     return df
+
 
 def clean_data(df):
     """Standardise values and remove anomalies"""
@@ -112,12 +116,14 @@ def clean_data(df):
     df = type_cast(df)
     return df
 
+
 def remove_invalid_stations(df):
     """Remove DAB Radio stations that have invalid NGR"""
     # Specify invalid NGRs to drop records
     invalid_ngr = ('NZ02553847', 'SE213515', 'NT05399374', 'NT25265908')
     df_filtered = df[~df['NGR'].isin(invalid_ngr)].reset_index()
     return df_filtered
+
 
 def wrangle_dab_multiplex(df):
     """Extract DAB multiplex blocks C18A, C18F and C188 into
@@ -132,6 +138,7 @@ def wrangle_dab_multiplex(df):
     df_out = df[df[dab_multiplexes].any(axis=1)]
     return df_out
 
+
 def get_output_columns(df):
     """Remove columns that are not required for output"""
     # Rename columns according to client brief
@@ -145,6 +152,7 @@ def get_output_columns(df):
     # Get subset of dataframe with required columns
     df_out = df[keep_cols]
     return df_out
+
 
 def format_json(df):
     """Convert data into a dictionary ready to accurately
@@ -180,7 +188,6 @@ def format_json(df):
     return data
 
 
-
 def generate_summary_stats(df):
     """Calculate the mean, median, and mode of Power(kW)
     for the C18A, C18F, C188 DAB multiplexes"""
@@ -212,6 +219,7 @@ def generate_summary_stats(df):
         print('hold')
     return df
 
+
 def generate_graph(df):
     """4.	Produce a suitable graph that display the following information from the
 three DAB multiplexes that you extracted earlier: C18A, C18F, C188:
@@ -219,12 +227,12 @@ Site, Freq, Block, Serv Label1, Serv Label2, Serv Label3, Serv label4, Serv Labe
 You may need to consider how you group this data to make visualisation feasible.
 """
 
+
 def generate_corr_graph(df):
     """5.	Determine if there is any significant correlation between the
 Freq, Block, Serv Label1, Serv Label2, Serv Label3, Serv label4,Serv Label10 
 used by the extracted DAB stations.  
 You will need to select an appropriate visualisation to demonstrate this."""
-
 
 
 def handler(antenna_path, params_path):
@@ -244,7 +252,6 @@ def handler(antenna_path, params_path):
     df = generate_summary_stats(df)
     generate_graph(df)
     generate_corr_graph(df)
-
 
 
 if __name__ == '__main__':
