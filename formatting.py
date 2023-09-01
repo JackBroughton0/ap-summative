@@ -87,8 +87,6 @@ def clean_data(df):
     # Strip extra whitespace from column names
     df.columns = [col.strip() for col in df.columns]
     df = df.rename({'Freq.': 'Freq'}, axis=1)
-    # Remove '- DAB' from the end of Site values
-    df['Site'] = df['Site'].str.replace('- DAB', '')
     # Remove commas from Power values
     df['In-Use ERP Total'] = df['In-Use ERP Total'].str.replace(',', '')
     for col in df.columns:
@@ -146,10 +144,10 @@ def format_json(df):
     for index, row in df.iterrows():
         entry = {
             '_id': row['id'],
-            'NGR': row['NGR'],
             'DAB_Multiplex': None,
-            'Site': row['Site'],
-            'Site Height': row['Site Height'],
+            'Site Info': {'NGR': row['NGR'],
+                          'Site': row['Site']},
+                          'Site Height': row['Site Height'],
             'Aerial height(m)': row['Aerial height(m)'],
             'Power(kW)': row['Power(kW)'],
             'Date': row['Date'],
