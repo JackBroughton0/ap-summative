@@ -80,6 +80,19 @@ def format_dates(df):
             print(f'Unsupported date format: {e}')
     return df
 
+def type_cast(df):
+    """Cast the data types of the columns required
+    for output to generate visualisations"""
+    # Parse dates
+    df = format_dates(df)
+    # Convert to integer columns
+    df['Site Height'] = df['Site Height'].astype(int)
+    df['In-Use Ae Ht'] = df['In-Use Ae Ht'].astype(int)
+    # Convert to float columns
+    df['In-Use ERP Total'] = df['In-Use ERP Total'].astype(float)
+    df['Freq'] = df['Freq'].astype(float)
+    return df
+
 def clean_data(df):
     """Standardise values and remove anomalies"""
     # Duplicates have undesirable impacts on visualisations
@@ -96,8 +109,8 @@ def clean_data(df):
         df[col] = df[col].str.upper()
     # Remove spaces from NGR values
     df['NGR'] = df['NGR'].str.replace(' ', '')
-    # Parse dates
-    df = format_dates(df)
+    # Cast the data types of the required columns
+    df = type_cast(df)
     return df
 
 def remove_invalid_stations(df):
