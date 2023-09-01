@@ -15,47 +15,37 @@ class MyApplication:
 
     def get_csv_files(self):
         """Read the user input CSV files"""
-        user_file_selection = filedialog.askopenfilenames(
+        input_files = filedialog.askopenfilenames(
             initialdir=r"C:\Computer Science\Advanced Programming\Formative\Data sets",
             title="Select CSV files",
             filetypes=(("csv files", "*.csv"),))
-        try:
-            input_files = user_file_selection
-        except AttributeError:
-            "Please select one or more files using the pop-up window"
-            return None  # Return None or handle the error as needed
+        # Ensure the user has selected two files
+        while len(input_files) != 2:
+            print('Please select two input files for "Upload and Clean".')
+            input_files = self.get_csv_files()
         return input_files
 
     def clean_file(self):
         """Read the user input csv then clean and format.
         Finally, give back the cleaned file for the user to check and reupload"""
         input_files = self.get_csv_files()
-        # Ensure the user has selected two files
-        while len(input_files) != 2:
-            print('Please select two input files for "Upload and Clean".')
-            input_files = self.get_csv_files()
         upload_data = formatting.handler(input_files)
 
-    def get_json_file():
+    def get_json_file(self):
         """Read the formatted json file"""
-        user_file_selection = filedialog.askopenfilenames(
+        json_file = filedialog.askopenfilenames(
             initialdir=r"C:\Computer Science\Advanced Programming\Formative\Data sets",
             title="Select json file",
             filetypes=(("json files", "*.json"),))
-        try:
-            json_file = user_file_selection
-        except AttributeError:
-            "Please select one or more files using the pop-up window"
-            return None  # Return None or handle the error as needed
+        # Ensure the user has selected one file
+        while len(json_input_file) != 1:
+            print('Please select one input file for "Upload and Save".')
+            json_input_file = self.get_json_file()
         return json_file
 
     def save_clean_file(self):
         """Read the user input and save the file"""
         json_input_file = self.get_json_file()
-        # Ensure the user has selected one file
-        while len(json_input_file) != 1:
-            print('Please select one input file for "Upload and Save".')
-            json_input_file = self.get_json_file()
         upload_data = formatting.format_json(json_input_file)
 
     def get_frames_main(self, window):
