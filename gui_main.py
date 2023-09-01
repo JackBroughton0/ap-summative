@@ -23,13 +23,23 @@ class MyApplication:
         while len(input_files) != 2:
             print('Please select two input files for "Upload and Clean".')
             input_files = self.get_csv_files()
-        return input_files
+        # Unpack files tuple
+        if 'antenna' in input_files[0].lower():
+            antenna_path = input_files[0]
+            params_path = input_files[1]
+        elif 'params' in input_files[0].lower():
+            params_path = input_files[0]
+            antenna_path = input_files[1]
+        else:
+            print("Please ensure each file name contains either 'antenna' or 'params'.")
+            input_files = self.get_csv_files()
+        return antenna_path, params_path
 
     def clean_file(self):
         """Read the user input csv then clean and format.
         Finally, give back the cleaned file for the user to check and reupload"""
-        input_files = self.get_csv_files()
-        upload_data = formatting.handler(input_files)
+        antenna_path, params_path = self.get_csv_files()
+        upload_data = formatting.handler(antenna_path, params_path)
 
     def get_json_file(self):
         """Read the formatted json file"""
@@ -46,7 +56,8 @@ class MyApplication:
     def save_clean_file(self):
         """Read the user input and save the file"""
         json_input_file = self.get_json_file()
-        upload_data = formatting.format_json(json_input_file)
+        df = pd.read_json(json_input_file)
+        upload_data = formatting.format_json(df)
 
     def get_frames_main(self, window):
         """Get frames to contain widgets on main window"""
