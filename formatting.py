@@ -200,7 +200,7 @@ def handler(antenna_path, params_path):
     df_out = get_output_columns(df)
     # Convert the dataframe to json
     upload_data = format_json(df_out)
-
+    return upload_data
 
 if __name__ == '__main__':
     antenna_path = r'C:\Users\jbrou\Advanced Programming\OL6 AP 2223 Data sets\Data sets/TxAntennaDAB.csv'

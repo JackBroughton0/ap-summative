@@ -13,30 +13,29 @@ class MyApplication:
         self.root = root
         self.setup_ui()
 
-    def get_user_file(self):
-        """Read the user input csv"""
-        user_file_selection = filedialog.askopenfile(
+    def get_input_files(self, raw_data):
+        """Read the user input CSV files"""
+        user_file_selection = filedialog.askopenfilenames(
             initialdir=r"C:\Computer Science\Advanced Programming\Formative\Data sets",
-            title="Select a csv file",
+            title="Select CSV files",
             filetypes=(("csv files", "*.csv"),))
         try:
-            user_file = user_file_selection.name
+            user_files = user_file_selection
         except AttributeError:
-            "Please select a file pop up window"
-        return user_file
+            "Please select one or more files using the pop-up window"
+            return None  # Return None or handle the error as needed
+        return user_files
 
     def clean_file(self):
         """Read the user input csv then clean and format.
         Finally, give back the cleaned file for the user to check and reupload"""
-        user_file = self.get_user_file()
-        try:
-            df_input = pd.read_csv(user_file, dtype='str')
-        except ValueError:
-            "Don't worry about this now, use with open and clean lines"
+        input_files = self.get_input_files(raw_data=True)
+        upload_data = formatting.handler(input_files, None) # None for test
 
     def save_clean_file(self):
         """Read the user input and save the file"""
-        clean_user_file = self.get_user_file()
+        clean_user_file = self.get_input_files(raw_data=False)
+        upload_data = formatting.format_json(clean_user_file)
 
     def get_frames_main(self, window):
         """Get frames to contain widgets on main window"""
@@ -95,3 +94,4 @@ if __name__ == '__main__':
     root = tk.Tk()
     app = MyApplication(root)
     app.run()
+
