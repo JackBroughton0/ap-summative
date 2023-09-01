@@ -199,8 +199,8 @@ def generate_summary_stats(df):
     """Calculate the mean, median, and mode of Power(kW)
     for the C18A, C18F, C188 DAB multiplexes"""
     # Type cast relevant columns to allow descriptive statistics calculations
-    df['Site Height'] = df['Site Height'].astype('int')
-    df['Power(kW)'] = df['Power(kW)'].str.replace(',', '').astype('float')
+    df['Site Height'] = df['Site Height'].astype(int)
+    df['Power(kW)'] = df['Power(kW)'].str.replace(',', '').astype(float)
 
     for multiplex in df['EID'].unique():
         site_height_mask = (df['EID']==multiplex) & (df['Site Height'] > 75)
