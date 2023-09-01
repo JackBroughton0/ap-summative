@@ -13,7 +13,7 @@ class MyApplication:
         self.root = root
         self.setup_ui()
 
-    def get_input_files(self, raw_data):
+    def get_input_files(self):
         """Read the user input CSV files"""
         user_file_selection = filedialog.askopenfilenames(
             initialdir=r"C:\Computer Science\Advanced Programming\Formative\Data sets",
@@ -29,12 +29,20 @@ class MyApplication:
     def clean_file(self):
         """Read the user input csv then clean and format.
         Finally, give back the cleaned file for the user to check and reupload"""
-        input_files = self.get_input_files(raw_data=True)
-        upload_data = formatting.handler(input_files, None) # None for test
+        input_files = self.get_input_files()
+        # Ensure the user has selected two files
+        while len(input_files) != 2:
+            print('Please select two input files for "Upload and Clean".')
+            input_files = self.get_input_files()
+        upload_data = formatting.handler(input_files)
 
     def save_clean_file(self):
         """Read the user input and save the file"""
-        clean_user_file = self.get_input_files(raw_data=False)
+        clean_user_file = self.get_input_files()
+        # Ensure the user has selected one file
+        while len(clean_user_file) != 1:
+            print('Please select one input file for "Upload and Save".')
+            clean_user_file = self.get_input_files()
         upload_data = formatting.format_json(clean_user_file)
 
     def get_frames_main(self, window):
