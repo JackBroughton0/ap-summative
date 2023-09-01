@@ -86,6 +86,7 @@ def type_cast(df):
     # Parse dates
     df = format_dates(df)
     # Convert to integer columns
+    df['id'] = df['id'].astype(int)
     df['Site Height'] = df['Site Height'].astype(int)
     df['In-Use Ae Ht'] = df['In-Use Ae Ht'].astype(int)
     # Convert to float columns
@@ -157,13 +158,13 @@ def format_json(df):
     for index, row in df.iterrows():
         entry = {
             '_id': row['id'],
+            'Date': row['Date'],
             'DAB_Multiplex': None,
             'Site Info': {'NGR': row['NGR'],
                           'Site': row['Site'],
                           'Site Height': row['Site Height']},
             'Aerial height(m)': row['Aerial height(m)'],
             'Power(kW)': row['Power(kW)'],
-            'Date': row['Date'],
             'Freq': row['Freq'],
             'Block': row['Block'],
             'Service Labels': {'Serv Label1': row['Serv Label1'],
