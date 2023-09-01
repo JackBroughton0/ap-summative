@@ -158,13 +158,14 @@ def format_json(df):
     upload to the radio_data MongoDB database"""
     # Create a list to store the data
     data = []
-    dab_multiplexes = ['C18A', 'C18F', 'C188']
     # Iterate through each row in the DataFrame
     for index, row in df.iterrows():
         entry = {
             '_id': row['id'],
             'Date': row['Date'],
-            'DAB_Multiplex': None,
+            'C18A': row['C18A'],
+            'C18F': row['C18F'],
+            'C188': row['C188'],
             'Site Info': {'NGR': row['NGR'],
                           'Site': row['Site'],
                           'Site Height': row['Site Height']},
@@ -178,11 +179,9 @@ def format_json(df):
                                 'Serv Label4': row['Serv Label4'],
                                 'Serv Label10': row['Serv Label10']}
         }
-        # Determine the DAB multiplex and update the entry
-        for multiplex in dab_multiplexes:
-            if row[multiplex]:
-                entry['DAB_Multiplex'] = multiplex
-                break
+        # Replace empty strings with None in the dictionary
+        entry = {key: value if value not in ['', np.nan]
+                  else None for key, value in entry.items()}
         data.append(entry)
     return data
 

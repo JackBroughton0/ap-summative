@@ -1,4 +1,6 @@
 import pymongo
+import pandas as pd
+from pandas import json_normalize
 
 
 def upload_to_mongo(collection, upload_data):
@@ -7,12 +9,20 @@ def upload_to_mongo(collection, upload_data):
     collection.insert_many(upload_data)
 
 
+def clean_column_name(column_name):
+    # Remove the prefixes and dots
+    cleaned_name = column_name.replace('Service Labels.', '').replace('Site Info.', '')
+    return cleaned_name
+
+
 def retrieve_from_mongo(collection):
     """Retrieve the cleaned and formatted data from MongoDB.
     This will be the input data for data visualisations"""
     all_documents = collection.find({})
-    # df = 
-    # return df
+    document_list = list(all_documents)
+    df = json_normalize(document_list)
+    df.columns = [clean_column_name(col) for col in df.columns]
+    return df
 
 
 def connect_to_mongodb():
@@ -23,4 +33,10 @@ def connect_to_mongodb():
     db = client["radio_data"]
     collection = db["formatted_data"]
     return collection
+
+
+if __name__ == '__main__':
+    collection = connect_to_mongodb()
+    df = retrieve_from_mongo(collection)
+    print('hold')
 
