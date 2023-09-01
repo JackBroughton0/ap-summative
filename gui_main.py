@@ -23,13 +23,6 @@ class MyApplication:
             user_file = user_file_selection.name
         except AttributeError:
             "Please select a file pop up window"
-        # user_file = "File entered in text above button"
-        # try:
-        #     with open(user_file, 'r') as csv_file:
-        #         all_lines = csv_file.readlines()
-        # except NotADirectoryError:
-        #     "Please enter a valid directory and file name."
-        #UnboundLocalError: cannot access local variable 'user_file' where it is not associated with a value
         return user_file
 
     def clean_file(self):
