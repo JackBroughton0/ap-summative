@@ -81,6 +81,8 @@ class MyApplication:
     def create_vis_combobox(self):
         """Create a combobox where the dropdown
         provides a list of the available visualisations"""
+        visualisation_label = tk.Label(self.visualisation_frame, text="Select Visualisation:")
+        visualisation_label.grid(row=1, column=0, padx=10, pady=(10,2), sticky="w")
         # Instantiate combobox and set state to read only
         visualisation_options = ttk.Combobox(self.visualisation_frame,
                                             values=["Summary Statistics",
@@ -88,17 +90,18 @@ class MyApplication:
                                                     "Bar Graphs"],
                                             textvariable=self.selected_visualisation,
                                             state="readonly")
-        visualisation_options.grid(row=1, column=0, padx=10, pady=50)
-        visualisation_options.set("Select Visualisation")
+        visualisation_options.grid(row=2, column=0, padx=10, pady=(2,50))
+        # Set to the client's initial information needs
+        visualisation_options.set("Summary Statistics")
 
     def create_vars_listbox(self):
         """Create a listbox containing the variables
         that can be included in the visualisations"""
         variables_label = tk.Label(self.visualisation_frame, text="Select Variables:")
-        variables_label.grid(row=2, column=0, padx=10, pady=2, sticky="w")
+        variables_label.grid(row=3, column=0, padx=10, pady=2, sticky="w")
 
         self.variables_listbox = tk.Listbox(self.visualisation_frame, selectmode=tk.MULTIPLE)
-        self.variables_listbox.grid(row=3, column=0, padx=10, pady=2)
+        self.variables_listbox.grid(row=4, column=0, padx=10, pady=2)
         # Populate the Listbox with variables
         variables = ["Site", "Freq", "Block", "Serv Label1", "Serv Label2",
                       "Serv Label3", "Serv Label4", "Serv Label10"]
@@ -119,7 +122,7 @@ class MyApplication:
         """Create a button to allow visualisations
         to be displayed"""
         generate_button = ttk.Button(self.visualisation_frame, text="Generate", command=self.generate_visualisation)
-        generate_button.grid(row=4, column=0, padx=10, pady=5)
+        generate_button.grid(row=5, column=0, padx=10, pady=5)
     
     def create_widgets(self):
         """Create widgets for the user interface and
