@@ -15,7 +15,7 @@ class MyApplication:
         self.root = root
         self.root.title("Data Visualisation App")
         self.root.geometry("950x600")
-        self.configure_style()  # Configure the style
+        self.configure_style()
         self.create_widgets()
 
     def configure_style(self):
@@ -38,13 +38,43 @@ class MyApplication:
     def create_upload_buttons(self):
         """Create buttons to allow the user to upload their
         data, one for clean data and one for raw data"""
-        upload_clean_button = ttk.Button(self.root, text="Clean and Upload", command=self.clean_file)
-        upload_clean_button.pack()
+        # Clean and Upload button
+        clean_raw_button = ttk.Button(self.root, text="Clean and Upload", command=self.clean_file)
+        clean_raw_button.pack()
 
         # Upload JSON Button
         upload_json_button = ttk.Button(self.root, text="Upload JSON", command=self.save_json_file)
         upload_json_button.pack()
 
+    def create_visualisation_canvas(self):
+        """Create a canvas to display visualisations
+        on the main window"""
+        self.canvas = FigureCanvasTkAgg(plt.figure(figsize=(6, 4)), master=self.root)
+        self.canvas_widget = self.canvas.get_tk_widget()
+        self.canvas_widget.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+
+    def format_visual_frame(self):
+        """Organise the Data Visualisation Frame by
+        creating and positioning the necessary widgets"""
+        # Visualisation Options
+        visualisation_options = ttk.Combobox(self.visualisation_frame, values=["Summary Statistics", "Correlation", "Bar Graphs"])
+        visualisation_options.grid(row=0, column=0, padx=10, pady=10)
+        visualisation_options.set("Select Visualisation")
+
+        # Variables Selection
+        variables_label = tk.Label(self.visualisation_frame, text="Select Variables:")
+        variables_label.grid(row=1, column=0, padx=10, pady=5, sticky="w")
+
+        # Variables List
+        variables_listbox = tk.Listbox(self.visualisation_frame, selectmode=tk.MULTIPLE)
+        variables_listbox.grid(row=2, column=0, padx=10, pady=5)
+
+    def create_generate_button(self):
+        """Create a button to allow visualisations
+        to be displayed"""
+        generate_button = ttk.Button(self.visualisation_frame, text="Generate", command=self.generate_visualisation)
+        generate_button.grid(row=3, column=0, padx=10, pady=5)
+    
     def create_widgets(self):
         """Create widgets for the user interface and
         organise positioning"""
@@ -53,30 +83,14 @@ class MyApplication:
         # Create buttons to allow file uploads
         self.create_upload_buttons()
         # Canvas for Matplotlib Plot
-        self.canvas = FigureCanvasTkAgg(plt.figure(figsize=(6, 4)), master=self.root)
-        self.canvas_widget = self.canvas.get_tk_widget()
-        self.canvas_widget.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
-
+        self.create_visualisation_canvas()
         # Data Visualisations Section
         self.visualisation_frame = ttk.Frame(self.root)
         self.visualisation_frame.pack(fill=tk.BOTH, expand=True)
-
-        # Visualisation Options
-        visualisation_options = ttk.Combobox(self.visualisation_frame, values=["Summary Statistics", "Correlation", "Bar Graphs"])
-        visualisation_options.grid(row=0, column=0, padx=10, pady=10)
-        visualisation_options.set("Select Visualisation")
-
-        # Variables Selection (you can customize this based on your data)
-        variables_label = tk.Label(self.visualisation_frame, text="Select Variables:")
-        variables_label.grid(row=1, column=0, padx=10, pady=5, sticky="w")
-
-        # Variables List (you can customize this based on your data)
-        variables_listbox = tk.Listbox(self.visualisation_frame, selectmode=tk.MULTIPLE)
-        variables_listbox.grid(row=2, column=0, padx=10, pady=5)
-
-        # Generate Button
-        generate_button = ttk.Button(self.visualisation_frame, text="Generate", command=self.generate_visualisation)
-        generate_button.grid(row=3, column=0, padx=10, pady=5)
+        # Organise the Data Visualisation frame
+        self.format_visual_frame()
+        # Create generate button to display visualisations
+        self.create_generate_button()
 
     def get_csv_files(self):
         """Read the user input CSV files"""
