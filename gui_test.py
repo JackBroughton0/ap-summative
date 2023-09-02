@@ -79,12 +79,10 @@ class MyApplication:
         c188_checkbox = ttk.Checkbutton(self.visualisation_frame, text="C188", variable=self.c188_var)
         c188_checkbox.grid(row=0, column=3, padx=5, pady=2, sticky="w")
 
-    def format_visual_frame(self):
-        """Organise the Data Visualisation Frame by
-        creating and positioning the necessary widgets"""
-        # Provide DAB multiplex options 
-        self.create_dab_checkbuttons()
-        # Provide visualisation type options
+    def create_vis_combobox(self):
+        """Create a combobox where the dropdown
+        provides a list of the available visualisations"""
+        # Instantiate combobox and set state to read only
         visualisation_options = ttk.Combobox(self.visualisation_frame,
                                             values=["Summary Statistics",
                                                     "Correlation",
@@ -94,7 +92,9 @@ class MyApplication:
         visualisation_options.grid(row=1, column=0, padx=10, pady=50)
         visualisation_options.set("Select Visualisation")
 
-        # Provide variables options
+    def create_vars_listbox(self):
+        """Create a listbox containing the variables
+        that can be included in the visualisations"""
         variables_label = tk.Label(self.visualisation_frame, text="Select Variables:")
         variables_label.grid(row=2, column=0, padx=10, pady=2, sticky="w")
 
@@ -106,6 +106,16 @@ class MyApplication:
                       "Serv Label3", "Serv Label4", "Serv Label10"]
         for variable in variables:
             variables_listbox.insert(tk.END, variable)
+
+    def format_visual_frame(self):
+        """Organise the Data Visualisation Frame by
+        creating and positioning the necessary widgets"""
+        # Provide DAB multiplex options 
+        self.create_dab_checkbuttons()
+        # Provide visualisation type options
+        self.create_vis_combobox()
+        # Provide variables options
+        self.create_vars_listbox()
 
     def create_generate_button(self):
         """Create a button to allow visualisations
