@@ -18,9 +18,9 @@ class MyApplication:
         self.configure_style()
         self.selected_visualisation = tk.StringVar()
         self.selected_variables = []
-        self.c18a_var = tk.IntVar()
-        self.c18f_var = tk.IntVar()
-        self.c188_var = tk.IntVar()
+        self.c18a_var = tk.BooleanVar()
+        self.c18f_var = tk.BooleanVar()
+        self.c188_var = tk.BooleanVar()
         self.create_widgets()
 
     def configure_style(self):
@@ -206,9 +206,9 @@ class MyApplication:
         # Get the user's visualisation requirements
         selected_visualisation = self.selected_visualisation.get()
         selected_variables = self.selected_variables
-        c18a = bool(self.c18a_var.get())
-        c18f = bool(self.c18f_var.get())
-        c188 = bool(self.c188_var.get())
+        c18a = self.c18a_var.get()
+        c18f = self.c18f_var.get()
+        c188 = self.c188_var.get()
 
         # Sample data for demonstration
         x = [1, 2, 3, 4, 5]
