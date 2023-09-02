@@ -16,6 +16,8 @@ class MyApplication:
         self.root.title("Data Visualisation App")
         self.root.geometry("950x600")
         self.configure_style()
+        self.selected_visualisation = tk.StringVar()
+        self.selected_variables = tk.StringVar()
         self.create_widgets()
 
     def configure_style(self):
@@ -64,7 +66,11 @@ class MyApplication:
         """Organise the Data Visualisation Frame by
         creating and positioning the necessary widgets"""
         # Visualisation Options
-        visualisation_options = ttk.Combobox(self.visualisation_frame, values=["Summary Statistics", "Correlation", "Bar Graphs"])
+        visualisation_options = ttk.Combobox(self.visualisation_frame,
+                                             values=["Summary Statistics",
+                                                      "Correlation",
+                                                      "Bar Graphs"],
+                                             textvariable=self.selected_visualisation)
         visualisation_options.grid(row=0, column=0, padx=10, pady=10)
         visualisation_options.set("Select Visualisation")
 
@@ -73,7 +79,8 @@ class MyApplication:
         variables_label.grid(row=1, column=0, padx=10, pady=5, sticky="w")
 
         # Variables List
-        variables_listbox = tk.Listbox(self.visualisation_frame, selectmode=tk.MULTIPLE)
+        variables_listbox = tk.Listbox(self.visualisation_frame, selectmode=tk.MULTIPLE,
+                                       listvariable=self.selected_variables)
         variables_listbox.grid(row=2, column=0, padx=10, pady=5)
 
     def create_generate_button(self):
@@ -170,6 +177,11 @@ class MyApplication:
             messagebox.showinfo("No file selected", "Please select your json file")
 
     def generate_visualisation(self):
+        """Pass the selected visualisation options to
+        the visualisations module and plot the outputs"""
+        selected_visualisation = self.selected_visualisation.get()
+        selected_variables = self.selected_variables.get()
+
         # Sample data for demonstration
         x = [1, 2, 3, 4, 5]
         y = [5, 4, 3, 2, 1]
