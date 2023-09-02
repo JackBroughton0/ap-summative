@@ -203,8 +203,12 @@ class MyApplication:
     def generate_visualisation(self):
         """Pass the selected visualisation options to
         the visualisations module and plot the outputs"""
+        # Get the user's visualisation requirements
         selected_visualisation = self.selected_visualisation.get()
-        selected_variables = self.selected_variables.get()
+        selected_variables = self.selected_variables
+        c18a = bool(self.c18a_var.get())
+        c18f = bool(self.c18f_var.get())
+        c188 = bool(self.c188_var.get())
 
         # Sample data for demonstration
         x = [1, 2, 3, 4, 5]
