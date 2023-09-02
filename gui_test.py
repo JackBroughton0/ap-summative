@@ -70,7 +70,7 @@ class MyApplication:
         creating and positioning the necessary widgets"""
         # DAB multiplex selection
         dab_multiplex = tk.Label(self.visualisation_frame, text="Select DAB Multiplex:")
-        dab_multiplex.grid(row=0, column=0, padx=3, pady=2, sticky="w")
+        dab_multiplex.grid(row=0, column=0, padx=10, sticky="w")
 
         # Radio Buttons for 'C18A', 'C18F', 'C188'
         c18a_checkbox = ttk.Checkbutton(self.visualisation_frame, text="C18A", variable=self.c18a_var)
