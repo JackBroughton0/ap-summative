@@ -85,7 +85,7 @@ class MyApplication:
     def get_frames_main(self, window):
         """Get frames to contain widgets on main window"""
         # Create a frame to contain the description
-        description_frame = tk.Frame(window, borderwidth=5, bg="green")
+        description_frame = tk.Frame(window, borderwidth=5, bg="light blue")
         description_frame.grid(row=0, column=0)
         # Create a Notebook widget to contain the tabs
         notebook = ttk.Notebook(window)
@@ -125,9 +125,9 @@ class MyApplication:
         R1 = tk.Radiobutton(data_vis_tab, text="Correlations", variable=var, value=1)
         R1.grid(row=0, column=0)
         R2 = tk.Radiobutton(data_vis_tab, text="Descriptive Statistics", variable=var, value=2)
-        R2.grid(row=1, column=1)
+        R2.grid(row=1, column=0)
         R3 = tk.Radiobutton(data_vis_tab, text="Bar Charts", variable=var, value=3)
-        R3.grid(row=2, column=2)
+        R3.grid(row=2, column=0)
 
     def setup_ui(self):
         description_frame, data_upload_tab, data_vis_tab = self.get_frames_main(self.root)
