@@ -17,7 +17,6 @@ class MyApplication:
         self.root.geometry("950x600")
         self.configure_style()
         self.selected_visualisation = tk.StringVar()
-        self.selected_variables = []
         self.c18a_var = tk.BooleanVar()
         self.c18f_var = tk.BooleanVar()
         self.c188_var = tk.BooleanVar()
@@ -98,14 +97,13 @@ class MyApplication:
         variables_label = tk.Label(self.visualisation_frame, text="Select Variables:")
         variables_label.grid(row=2, column=0, padx=10, pady=2, sticky="w")
 
-        variables_listbox = tk.Listbox(self.visualisation_frame, selectmode=tk.MULTIPLE,
-                                       listvariable=self.selected_variables)
-        variables_listbox.grid(row=3, column=0, padx=10, pady=2)
+        self.variables_listbox = tk.Listbox(self.visualisation_frame, selectmode=tk.MULTIPLE)
+        self.variables_listbox.grid(row=3, column=0, padx=10, pady=2)
         # Populate the Listbox with variables
         variables = ["Site", "Freq", "Block", "Serv Label1", "Serv Label2",
                       "Serv Label3", "Serv Label4", "Serv Label10"]
         for variable in variables:
-            variables_listbox.insert(tk.END, variable)
+            self.variables_listbox.insert(tk.END, variable)
 
     def format_visual_frame(self):
         """Organise the Data Visualisation Frame by
@@ -215,7 +213,10 @@ class MyApplication:
         the visualisations module and plot the outputs"""
         # Get the user's visualisation requirements
         selected_visualisation = self.selected_visualisation.get()
-        selected_variables = self.selected_variables
+        # Get the indices of the selected items
+        selected_indices = self.variables_listbox.curselection()
+        # Retrieve the selected variable names
+        selected_vars = [self.variables_listbox.get(idx) for idx in selected_indices]   
         c18a = self.c18a_var.get()
         c18f = self.c18f_var.get()
         c188 = self.c188_var.get()
