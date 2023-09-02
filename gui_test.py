@@ -26,12 +26,10 @@ class MyApplication:
         """Write and format the description for
           the app and position at the top of the window"""
         # Description of the app's functionality and how to use it
-        description = ("This app allows users to visualise their DAB radio"
-                       " stations data.\nThe user can either upload clean"
-                       " data in json format or raw csv files to be"
-                       " processed and formatted automatically.\nFollowing"
-                       " this, the user is free to select and manipulate"
-                       " data visualisations.")
+        description = ("Visualise your DAB radio stations data!\n"
+                       " Upload a clean json file or raw csv files"
+                       " to be processed.\nThen generate"
+                       " your data visualisations.")
         description_label = tk.Label(self.root, text=description, font=("Helvetica", 14), bg='white')
         description_label.pack()
 
@@ -45,6 +43,11 @@ class MyApplication:
         # Upload JSON Button
         upload_json_button = ttk.Button(self.root, text="Upload JSON", command=self.save_json_file)
         upload_json_button.pack()
+
+    def create_message_label(self):
+        """Create a label to display a message initially"""
+        self.message_label = tk.Label(self.canvas_widget, text="No visualisation available yet", font=("Helvetica", 12))
+        self.message_label.pack(fill=tk.BOTH, expand=True)
 
     def create_visualisation_canvas(self):
         """Create a canvas to display visualisations
@@ -82,8 +85,10 @@ class MyApplication:
         self.create_description()
         # Create buttons to allow file uploads
         self.create_upload_buttons()
-        # Canvas for Matplotlib Plot
+        # Canvas for Matplotlib plots
         self.create_visualisation_canvas()
+        # Display a message before the first visualisation is created
+        self.create_message_label()
         # Data Visualisations Section
         self.visualisation_frame = ttk.Frame(self.root)
         self.visualisation_frame.pack(fill=tk.BOTH, expand=True)
@@ -174,7 +179,9 @@ class MyApplication:
         plt.xlabel("X-axis")
         plt.ylabel("Y-axis")
 
-        # Display the Matplotlib plot on the canvas
+        # Hide the message label and display the visualisation
+        self.message_label.pack_forget()
+        self.canvas_widget.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
         self.canvas.draw()
 
 
