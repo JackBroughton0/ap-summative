@@ -52,7 +52,8 @@ class MyApplication:
             # Upload the data to the formatted_data collection
             mongodb_interaction.upload_to_mongo(upload_data)
             # Give feedback to the user notifying successful upload
-            messagebox.showinfo("Success!", "Your data has been cleaned and uploaded")
+            messagebox.showinfo("Success!", "Your data has been uploaded.\n"
+                                "Please proceed to the Data Visualisations tab.")
 
     def get_json_file(self):
         """Read the formatted json file"""
@@ -74,7 +75,9 @@ class MyApplication:
             # Upload the data to the formatted_data collection
             mongodb_interaction.upload_to_mongo(upload_data)
             # Give feedback to the user notifying successful upload
-            messagebox.showinfo("Success!", "Your json file has been uploaded")
+            messagebox.showinfo("Success!", 
+                "Your JSON file has been uploaded.\n"
+                "Please proceed to the Data Visualizations tab.")
         else:
             # Give feedback to the user notifying unsuccessful upload
             messagebox.showinfo("No file selected", "Please select your json file")
@@ -97,7 +100,10 @@ class MyApplication:
     def get_description(self, description_frame):
         """Write a brief description of the gui"""
         text = tk.Text(description_frame, height=3)
-        text.insert(tk.INSERT, """Please upload your clean data before proceeding to the data visualisations tab.\nIf your data needs cleaning first, please click on the "Upload and Clean" button.""")
+        text.insert(tk.INSERT, "Please upload your clean data before"
+                    " proceeding to the data visualisations tab.\n"
+                    "If your data needs cleaning first, please click the"
+                    " 'Upload and Clean' button.")
         text.pack(anchor=tk.CENTER)
 
     def get_upload_buttons(self, data_upload_tab):
