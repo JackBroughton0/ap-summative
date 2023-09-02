@@ -17,7 +17,10 @@ class MyApplication:
         self.root.geometry("950x600")
         self.configure_style()
         self.selected_visualisation = tk.StringVar()
-        self.selected_variables = tk.StringVar()
+        self.selected_variables = []
+        self.c18a_var = tk.IntVar()
+        self.c18f_var = tk.IntVar()
+        self.c188_var = tk.IntVar()
         self.create_widgets()
 
     def configure_style(self):
@@ -65,29 +68,49 @@ class MyApplication:
     def format_visual_frame(self):
         """Organise the Data Visualisation Frame by
         creating and positioning the necessary widgets"""
+        # DAB multiplex selection
+        dab_multiplex = tk.Label(self.visualisation_frame, text="Select DAB Multiplex:")
+        dab_multiplex.grid(row=0, column=0, padx=3, pady=2, sticky="w")
+
+        # Radio Buttons for 'C18A', 'C18F', 'C188'
+        c18a_checkbox = ttk.Checkbutton(self.visualisation_frame, text="C18A", variable=self.c18a_var)
+        c18a_checkbox.grid(row=0, column=1, padx=5, pady=2, sticky="w")
+
+        c18f_checkbox = ttk.Checkbutton(self.visualisation_frame, text="C18F", variable=self.c18f_var)
+        c18f_checkbox.grid(row=0, column=2, padx=5, pady=2, sticky="w")
+
+        c188_checkbox = ttk.Checkbutton(self.visualisation_frame, text="C188", variable=self.c188_var)
+        c188_checkbox.grid(row=0, column=3, padx=5, pady=2, sticky="w")
+        
         # Visualisation Options
         visualisation_options = ttk.Combobox(self.visualisation_frame,
-                                             values=["Summary Statistics",
-                                                      "Correlation",
-                                                      "Bar Graphs"],
-                                             textvariable=self.selected_visualisation)
-        visualisation_options.grid(row=0, column=0, padx=10, pady=10)
+                                            values=["Summary Statistics",
+                                                    "Correlation",
+                                                    "Bar Graphs"],
+                                            textvariable=self.selected_visualisation,
+                                            state="readonly")
+        visualisation_options.grid(row=1, column=0, padx=10, pady=50)
         visualisation_options.set("Select Visualisation")
 
         # Variables Selection
         variables_label = tk.Label(self.visualisation_frame, text="Select Variables:")
-        variables_label.grid(row=1, column=0, padx=10, pady=5, sticky="w")
+        variables_label.grid(row=2, column=0, padx=10, pady=2, sticky="w")
 
         # Variables List
         variables_listbox = tk.Listbox(self.visualisation_frame, selectmode=tk.MULTIPLE,
                                        listvariable=self.selected_variables)
-        variables_listbox.grid(row=2, column=0, padx=10, pady=5)
+        variables_listbox.grid(row=3, column=0, padx=10, pady=2)
+        # Populate the Listbox with variables
+        variables = ["Site", "Freq", "Block", "Serv Label1", "Serv Label2",
+                      "Serv Label3", "Serv Label4", "Serv Label10"]
+        for variable in variables:
+            variables_listbox.insert(tk.END, variable)
 
     def create_generate_button(self):
         """Create a button to allow visualisations
         to be displayed"""
         generate_button = ttk.Button(self.visualisation_frame, text="Generate", command=self.generate_visualisation)
-        generate_button.grid(row=3, column=0, padx=10, pady=5)
+        generate_button.grid(row=4, column=0, padx=10, pady=5)
     
     def create_widgets(self):
         """Create widgets for the user interface and
