@@ -31,18 +31,22 @@ class MyApplication:
                        " to be processed.\nThen generate"
                        " your data visualisations.")
         description_label = tk.Label(self.root, text=description, font=("Helvetica", 14), bg='white')
-        description_label.pack()
+        description_label.pack(anchor='n')
 
     def create_upload_buttons(self):
         """Create buttons to allow the user to upload their
         data, one for clean data and one for raw data"""
         # Clean and Upload button
-        clean_raw_button = ttk.Button(self.root, text="Clean and Upload", command=self.clean_file)
-        clean_raw_button.pack()
+        clean_raw_button = ttk.Button(self.root, text="Clean and Upload",
+                                      padding=(10, 5), width=20,
+                                      command=self.clean_file)
+        clean_raw_button.pack(anchor='nw')
 
         # Upload JSON Button
-        upload_json_button = ttk.Button(self.root, text="Upload JSON", command=self.save_json_file)
-        upload_json_button.pack()
+        upload_json_button = ttk.Button(self.root, text="Upload JSON",
+                                        padding=(10, 5), width=20,
+                                        command=self.save_json_file)
+        upload_json_button.pack(anchor='nw')
 
     def create_message_label(self):
         """Create a label to display a message initially"""
