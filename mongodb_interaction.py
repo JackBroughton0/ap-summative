@@ -4,8 +4,11 @@ import numpy as np
 from pandas import json_normalize
 
 
-def upload_to_mongo(collection, upload_data):
+def upload_to_mongo(upload_data):
     """Upload the formatted data to MongoDB for later retrieval"""
+    collection = connect_to_mongodb()
+    # Delete all current documents in the collection
+    collection.delete_many({})
     # Insert JSON data into the collection
     collection.insert_many(upload_data)
 
