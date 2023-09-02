@@ -211,15 +211,16 @@ class MyApplication:
     def generate_visualisation(self):
         """Pass the selected visualisation options to
         the visualisations module and plot the outputs"""
-        # Get the user's visualisation requirements
-        selected_visualisation = self.selected_visualisation.get()
-        # Get the indices of the selected items
+        # Get the indices of the selected variables
         selected_indices = self.variables_listbox.curselection()
         # Retrieve the selected variable names
         selected_vars = [self.variables_listbox.get(idx) for idx in selected_indices]   
-        c18a = self.c18a_var.get()
-        c18f = self.c18f_var.get()
-        c188 = self.c188_var.get()
+        # Store the user's visualisation requirements
+        vis_input = {"C18A": self.c18a_var.get(),
+                     "C18F": self.c18f_var.get(),
+                     "C188": self.c188_var.get(),
+                     "Visualisation": self.selected_visualisation.get(),
+                     "Columns": selected_vars}
 
         # Sample data for demonstration
         x = [1, 2, 3, 4, 5]
