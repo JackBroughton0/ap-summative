@@ -15,42 +15,36 @@ class MyApplication:
 
     def get_csv_files(self):
         """Read the user input CSV files"""
-        input_files = filedialog.askopenfilenames(
+        # Request the antenna data set
+        antenna_path = filedialog.askopenfilename(
             initialdir=r"C:\Computer Science\Advanced Programming\Formative\Data sets",
-            title="Select CSV files",
-            filetypes=(("csv files", "*.csv"),))
-        # Ensure the user has selected two files
-        while len(input_files) != 2:
-            print('Please select two input files for "Upload and Clean".')
-            input_files = self.get_csv_files()
-        # Unpack files tuple
-        if 'antenna' in input_files[0].lower():
-            antenna_path = input_files[0]
-            params_path = input_files[1]
-        elif 'params' in input_files[0].lower():
-            params_path = input_files[0]
-            antenna_path = input_files[1]
-        else:
-            print("Please ensure each file name contains either 'antenna' or 'params'.")
-            input_files = self.get_csv_files()
+            title="Select the Antenna data",
+            filetypes=(("csv file", "*.csv"),))
+        # Request the params data set
+        params_path = filedialog.askopenfilename(
+            initialdir=r"C:\Computer Science\Advanced Programming\Formative\Data sets",
+            title="Select the Params data",
+            filetypes=(("csv file", "*.csv"),))
+
         return antenna_path, params_path
 
     def clean_file(self):
         """Read the user input csv then clean and format.
         Finally, give back the cleaned file for the user to check and reupload"""
         antenna_path, params_path = self.get_csv_files()
+        # Check the correct files have been chosen
+        if 'antenna' not in antenna_path.lower() or 'params' not in params_path.lower():
+            # Retry file selection
+            antenna_path, params_path = self.get_csv_files()
         upload_data = formatting.handler(antenna_path, params_path)
 
     def get_json_file(self):
         """Read the formatted json file"""
-        json_file = filedialog.askopenfilenames(
+        # Request the formatted json data
+        json_file = filedialog.askopenfilename(
             initialdir=r"C:\Computer Science\Advanced Programming\Formative\Data sets",
             title="Select json file",
             filetypes=(("json files", "*.json"),))
-        # Ensure the user has selected one file
-        while len(json_input_file) != 1:
-            print('Please select one input file for "Upload and Save".')
-            json_input_file = self.get_json_file()
         return json_file
 
     def save_clean_file(self):
