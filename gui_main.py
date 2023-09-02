@@ -3,6 +3,7 @@ import pandas as pd
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
+from tkinter import messagebox
 import formatting
 import mongodb_interaction
 import visualisations
@@ -42,6 +43,11 @@ class MyApplication:
             upload_data = formatting.handler(antenna_path, params_path)
             # Upload the data to the formatted_data collection
             mongodb_interaction.upload_to_mongo(upload_data)
+            # Give feedback to the user notifying successful upload
+            messagebox.showinfo("Success!", "Your data has been cleaned and uploaded")
+        else:
+            # Give feedback to the user notifying unsuccessful upload
+            messagebox.showinfo("Files not received", "Please retry selecting your input csv files")
 
     def get_json_file(self):
         """Read the formatted json file"""
@@ -66,6 +72,11 @@ class MyApplication:
             upload_data = formatting.format_json(df)
             # Upload the data to the formatted_data collection
             mongodb_interaction.upload_to_mongo(upload_data)
+            # Give feedback to the user notifying successful upload
+            messagebox.showinfo("Success!", "Your json file has been uploaded")
+        else:
+            # Give feedback to the user notifying unsuccessful upload
+            messagebox.showinfo("No file received", "Please retry selecting your json file")
 
     def get_frames_main(self, window):
         """Get frames to contain widgets on main window"""
@@ -121,6 +132,7 @@ class MyApplication:
         self.root.mainloop()
 
 if __name__ == '__main__':
+    # Use withdraw to hide the window until ready
     root = tk.Tk()
     app = MyApplication(root)
     app.run()
