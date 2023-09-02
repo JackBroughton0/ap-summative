@@ -10,8 +10,8 @@ import visualisations
 
 
 class MyApplication:
-    def __init__(self, root):
-        self.root = root
+    def __init__(self):
+        self.root = tk.Tk()
         self.setup_ui()
 
     def get_csv_files(self):
@@ -130,6 +130,8 @@ class MyApplication:
         R3.grid(row=2, column=0)
 
     def setup_ui(self):
+        self.s = ttk.Style()
+        self.s.configure('mainFrame.TFrame', background='light blue')
         description_frame, data_upload_tab, data_vis_tab = self.get_frames_main(self.root)
         self.get_description(description_frame)
         self.get_upload_buttons(data_upload_tab)
@@ -139,8 +141,6 @@ class MyApplication:
         self.root.mainloop()
 
 if __name__ == '__main__':
-    # Use withdraw to hide the window until ready
-    root = tk.Tk()
-    app = MyApplication(root)
+    app = MyApplication()
     app.run()
 
