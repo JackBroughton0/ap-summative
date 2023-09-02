@@ -25,18 +25,20 @@ class MyApplication:
             initialdir=r"C:\Computer Science\Advanced Programming\Formative\Data sets",
             title="Select the Params data",
             filetypes=(("csv file", "*.csv"),))
-
         return antenna_path, params_path
 
     def clean_file(self):
         """Read the user input csv then clean and format.
         Finally, give back the cleaned file for the user to check and reupload"""
+        # Retrieve the relevant csv file paths
         antenna_path, params_path = self.get_csv_files()
         # Check the correct files have been chosen
         if 'antenna' not in antenna_path.lower() or 'params' not in params_path.lower():
             # Retry file selection
             antenna_path, params_path = self.get_csv_files()
         upload_data = formatting.handler(antenna_path, params_path)
+        # Upload the data to the formatted_data collection
+        mongodb_interaction.upload_to_mongo(upload_data)
 
     def get_json_file(self):
         """Read the formatted json file"""
@@ -47,11 +49,15 @@ class MyApplication:
             filetypes=(("json files", "*.json"),))
         return json_file
 
-    def save_clean_file(self):
+    def save_json_file(self):
         """Read the user input and save the file"""
+        # Retrieve the json file path
         json_input_file = self.get_json_file()
         df = pd.read_json(json_input_file)
+        # Get subset of data required for visualisations
         upload_data = formatting.format_json(df)
+        # Upload the data to the formatted_data collection
+        mongodb_interaction.upload_to_mongo(upload_data)
 
     def get_frames_main(self, window):
         """Get frames to contain widgets on main window"""
@@ -82,7 +88,7 @@ class MyApplication:
         upload_and_clean.grid(row=0, rowspan=30, column=0, columnspan=20)
         # Create a button to allow the user to upload and save their data
         upload_and_save = tk.Button(data_upload_tab, text='Upload and Save',
-                                    width=10, height=3, padx=50, pady=50, command=self.save_clean_file)
+                                    width=10, height=3, padx=50, pady=50, command=self.save_json_file)
         upload_and_save.grid(row=30, rowspan=30, column=0, columnspan=20)
 
     def get_vis_buttons(self, data_vis_tab):
