@@ -65,24 +65,26 @@ class MyApplication:
         self.canvas_widget = self.canvas.get_tk_widget()
         self.canvas_widget.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
-    def format_visual_frame(self):
-        """Organise the Data Visualisation Frame by
-        creating and positioning the necessary widgets"""
+    def create_dab_checkbuttons(self):
+        """Provide checkbuttons to determine which
+        DAB multiplexes to generate visualisations for"""
         # DAB multiplex selection
         dab_multiplex = tk.Label(self.visualisation_frame, text="Select DAB Multiplex:")
         dab_multiplex.grid(row=0, column=0, padx=10, sticky="w")
-
-        # Radio Buttons for 'C18A', 'C18F', 'C188'
+        # Check buttons for 'C18A', 'C18F', 'C188'
         c18a_checkbox = ttk.Checkbutton(self.visualisation_frame, text="C18A", variable=self.c18a_var)
         c18a_checkbox.grid(row=0, column=1, padx=5, pady=2, sticky="w")
-
         c18f_checkbox = ttk.Checkbutton(self.visualisation_frame, text="C18F", variable=self.c18f_var)
         c18f_checkbox.grid(row=0, column=2, padx=5, pady=2, sticky="w")
-
         c188_checkbox = ttk.Checkbutton(self.visualisation_frame, text="C188", variable=self.c188_var)
         c188_checkbox.grid(row=0, column=3, padx=5, pady=2, sticky="w")
-        
-        # Visualisation Options
+
+    def format_visual_frame(self):
+        """Organise the Data Visualisation Frame by
+        creating and positioning the necessary widgets"""
+        # Provide DAB multiplex options 
+        self.create_dab_checkbuttons()
+        # Provide visualisation type options
         visualisation_options = ttk.Combobox(self.visualisation_frame,
                                             values=["Summary Statistics",
                                                     "Correlation",
@@ -92,11 +94,10 @@ class MyApplication:
         visualisation_options.grid(row=1, column=0, padx=10, pady=50)
         visualisation_options.set("Select Visualisation")
 
-        # Variables Selection
+        # Provide variables options
         variables_label = tk.Label(self.visualisation_frame, text="Select Variables:")
         variables_label.grid(row=2, column=0, padx=10, pady=2, sticky="w")
 
-        # Variables List
         variables_listbox = tk.Listbox(self.visualisation_frame, selectmode=tk.MULTIPLE,
                                        listvariable=self.selected_variables)
         variables_listbox.grid(row=3, column=0, padx=10, pady=2)
