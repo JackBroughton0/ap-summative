@@ -34,8 +34,7 @@ class MyApplication:
         return antenna_path, params_path
 
     def clean_file(self):
-        """Read the user input csv then clean and format.
-        Finally, give back the cleaned file for the user to check and reupload"""
+        """Read the user input csv then clean, format and upload"""
         # Retrieve the relevant csv file paths
         antenna_path, params_path = self.get_csv_files()
         # Check the correct files have been chosen
@@ -58,7 +57,7 @@ class MyApplication:
         return json_file
 
     def save_json_file(self):
-        """Read the user input and save the file"""
+        """Read the formatted user input and upload the data"""
         # Retrieve the json file path
         json_input_file = self.get_json_file()
         if json_input_file:
