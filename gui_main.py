@@ -22,7 +22,11 @@ class MyApplication:
             title="Select the Antenna data",
             filetypes=(("csv file", "*.csv"),))
         # Check if the user canceled or no file or the wrong file was selected
-        if not antenna_path or 'antenna' not in antenna_path.lower():
+        if not antenna_path:
+            return None, None
+        if 'antenna' not in antenna_path.lower():
+            # Give feedback to the user requesting correct file
+            messagebox.showinfo("Incorrect input file", "Please select the Antenna csv file")
             return None, None
         # Request the params data set
         params_path = filedialog.askopenfilename(
@@ -30,7 +34,11 @@ class MyApplication:
             title="Select the Params data",
             filetypes=(("csv file", "*.csv"),))
         # Check if the user canceled or no file or the wrong file was selected
-        if not params_path or 'params' not in params_path.lower():
+        if not params_path:
+            return None, None
+        if 'params' not in params_path.lower():
+            # Give feedback to the user requesting correct file
+            messagebox.showinfo("Incorrect input file", "Please select the Params csv file")
             return None, None
         return antenna_path, params_path
 
@@ -45,9 +53,6 @@ class MyApplication:
             mongodb_interaction.upload_to_mongo(upload_data)
             # Give feedback to the user notifying successful upload
             messagebox.showinfo("Success!", "Your data has been cleaned and uploaded")
-        else:
-            # Give feedback to the user notifying unsuccessful upload
-            messagebox.showinfo("Files not received", "Please retry selecting your input csv files")
 
     def get_json_file(self):
         """Read the formatted json file"""
@@ -56,10 +61,6 @@ class MyApplication:
             initialdir=r"C:\Computer Science\Advanced Programming\Formative\Data sets",
             title="Select json file",
             filetypes=(("json files", "*.json"),))
-        # Check if the user canceled or no file was selected
-        if not json_file:
-            print('No JSON file selected or dialog was canceled.')
-            return None
         return json_file
 
     def save_json_file(self):
@@ -76,7 +77,7 @@ class MyApplication:
             messagebox.showinfo("Success!", "Your json file has been uploaded")
         else:
             # Give feedback to the user notifying unsuccessful upload
-            messagebox.showinfo("No file received", "Please retry selecting your json file")
+            messagebox.showinfo("No file selected", "Please select your json file")
 
     def get_frames_main(self, window):
         """Get frames to contain widgets on main window"""
