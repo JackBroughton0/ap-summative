@@ -98,7 +98,7 @@ class MyApplication:
         """Create a listbox containing the variables
         that can be included in the visualisations"""
         variables_label = tk.Label(self.visualisation_frame, text="Select Variables:")
-        variables_label.grid(row=3, column=0, padx=10, pady=2, sticky="w")
+        variables_label.grid(row=3, column=0, padx=10, pady=(5,1), sticky="w")
 
         self.variables_listbox = tk.Listbox(self.visualisation_frame, selectmode=tk.MULTIPLE)
         self.variables_listbox.grid(row=4, column=0, padx=10, pady=2)
