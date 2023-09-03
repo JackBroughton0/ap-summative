@@ -100,7 +100,7 @@ class MyApplication:
         """Create a listbox containing the variables
         that can be included in the visualisations"""
         variables_label = tk.Label(self.visualisation_frame,
-                                   text="Select Variables:")
+                                   text="Select Correlation Variables:")
         variables_label.grid(row=3, column=0, padx=10, pady=(5,1), sticky="w")
 
         self.variables_listbox = tk.Listbox(self.visualisation_frame,
