@@ -99,11 +99,14 @@ def handler(vis_input):
         visualisation = summary_stats(df, figure_size)
     elif vis_input['visualisation'] == "Bar Graphs":
         # Subset the dataframe, take only required columns
-        df = df[['C18A', 'C18F', 'C188', 'Date', 'Site Height', 'Power(kW)']]
+        df = df[['C18A', 'C18F', 'C188', *vis_input['columns']]]
         visualisation = graph(df, figure_size)
     elif vis_input['visualisation'] == "Correlation":
+        # Do not accept Site as a variable for this graph
+        if 'Site' in vis_input['columns']:
+            vis_input['columns'].remove('Site')
         # Subset the dataframe, take only required columns
-        df = df[[*vis_input['columns']]]
+        df = df[['C18A', 'C18F', 'C188', *vis_input['columns']]]
         visualisation = corr_graph(df, figure_size)
     # Case where an unexpected visualisation has been requested
     else:
