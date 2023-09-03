@@ -142,6 +142,9 @@ def corr_graph(df, multiplexes, figure_size):
 
     # Create a heatmap of Cramér's V values
     plt.figure(figsize=figure_size)
+    plt.xticks(rotation=45, ha='right', fontsize=8)
+    plt.yticks(fontsize=8)
+    plt.subplots_adjust(bottom=0.15)
     sns.heatmap(cramer_matrix.astype(float), annot=True, cmap='coolwarm', fmt=".2f")
     plt.title("Cramér's V Heatmap")
     # Convert the heatmap to a figure
