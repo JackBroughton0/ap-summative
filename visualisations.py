@@ -131,8 +131,8 @@ def other_bar_graphs(df, multiplexes, figure_size):
     handles, labels = axes[0, 0].get_legend_handles_labels()
     axes[0, 0].get_legend().remove()
     # Create a single legend in the bottom right
-    fig.legend(handles=handles, labels=labels,
-                ncol=2, bbox_to_anchor=(0.97, 0.45))
+    fig.legend(handles=handles, labels=labels, title='Service Labels Key',
+                ncol=2, bbox_to_anchor=(0.97, 0.42))
 
     plt.tight_layout()
 
