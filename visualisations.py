@@ -99,16 +99,30 @@ def other_bar_graphs(df, multiplexes, figure_size):
     values for the requested DAB Multiplexes"""
     # Create single DAB Multiplex column to facilitate groupby
     df = get_mp_column(df.copy(), multiplexes)
-    # Group data by multiplex
-    multiplex_counts = df.groupby('DAB_Multiplex')
+    # Pivot "Service Labels" into binary columns
+    df = pd.get_dummies(df, columns=['Serv Label1', 'Serv Label2',
+                                           'Serv Label3', 'Serv Label4',
+                                           'Serv Label10'], dtype=int,
+                                            prefix='', prefix_sep='')
 
-    # Plot the grouped bar chart
-    fig, ax = plt.subplots(figsize=figure_size)
-    multiplex_counts.plot(kind='bar', ax=ax)
-    ax.set_xlabel('Multiplex')
-    ax.set_ylabel('Count')
-    ax.set_title('DAB Multiplex Distribution')
-    plt.xticks(rotation=45)
+    # Create subplots with 3 rows and 1 column
+    fig, axes = plt.subplots(3, 1, figsize=figure_size)
+    # Plot the counts of each service label grouped by Freq
+    df.groupby('Freq').sum().iloc[:, 1:].plot(kind='bar', ax=axes[0])
+    axes[0].set_title('Counts of Service Labels by Freq')
+    axes[0].set_ylabel('Count')
+
+    # Plot the counts of each service level grouped by DAB_Multiplex
+    df.groupby('DAB_Multiplex').sum().iloc[:, 1:].plot(kind='bar', ax=axes[1])
+    axes[1].set_title('Counts of Service Labels by DAB_Multiplex')
+    axes[1].set_ylabel('Count')
+
+    # Plot the number of unique sites grouped by DAB_Multiplex
+    df.groupby('DAB_Multiplex')['Site'].nunique().plot(kind='bar', ax=axes[2])
+    axes[2].set_title('Counts of Unique Sites by DAB_Multiplex')
+    axes[2].set_ylabel('Count')
+
+    plt.tight_layout()
 
     return fig
 
