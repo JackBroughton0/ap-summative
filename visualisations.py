@@ -6,6 +6,23 @@ import seaborn as sns
 import mongodb_interaction
 
 
+def format_dataframe(df, vis_input):
+    """Format the dataframe so that only the data records
+    with the requested DAB multiplexes are processed further"""
+    # Get the requested DAB Multiplexes
+    multiplexes = []
+    for mp in ['C18A', 'C18F', 'C188']:
+        if vis_input[mp]:
+            multiplexes.append(mp)
+    # Subset dataframe to only process required multiplexes
+    df_list = []
+    for mp in multiplexes:
+        df_sub = df.loc[df[mp] == mp].copy()
+        df_list.append(df_sub)
+    df = pd.concat(df_list)
+    return df, multiplexes
+
+
 def produce_stats(df_mp):
     """Calculate the mean, median, and mode of Power(kW)
     for the specified DAB multiplex"""
@@ -71,6 +88,8 @@ three DAB multiplexes that you extracted earlier: C18A, C18F, C188:
 Site, Freq, Block, Serv Label1, Serv Label2, Serv Label3, Serv label4, Serv Label10 
 You may need to consider how you group this data to make visualisation feasible.
 """
+    # Create single DAB Multiplex column to facilitate groupby
+    df['DAB_Multiplex'] = ''
     # Group data by multiplex and get counts for each multiplex
     C18A_counts = df.groupby('C18A').size()
     C18F_counts = df.groupby('C18F').size()
@@ -103,11 +122,7 @@ def handler(vis_input):
     df = mongodb_interaction.retrieve_from_mongo()
     # Get standard figure size
     figure_size = (10, 5)
-    # Get the requested DAB Multiplexes
-    multiplexes = []
-    for mp in ['C18A', 'C18F', 'C188']:
-        if vis_input[mp]:
-            multiplexes.append(mp)
+    df, multiplexes = format_dataframe(df, vis_input)
     # Determine the correct visualisation
     if vis_input['visualisation'] == "Summary Statistics":
         # Subset the dataframe, take only required columns
