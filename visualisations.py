@@ -93,13 +93,17 @@ def handler(vis_input):
     # Get standard figure size
     figure_size = (10, 5)
     # Determine the correct visualisation
-    if vis_input['Visualisation'] == "Summary Statistics":
+    if vis_input['visualisation'] == "Summary Statistics":
         # Subset the dataframe, take only required columns
         df = df[['C18A', 'C18F', 'C188', 'Date', 'Site Height', 'Power(kW)']]
         visualisation = summary_stats(df, figure_size)
-    elif vis_input['Visualisation'] == "Bar Graphs":
+    elif vis_input['visualisation'] == "Bar Graphs":
+        # Subset the dataframe, take only required columns
+        df = df[['C18A', 'C18F', 'C188', 'Date', 'Site Height', 'Power(kW)']]
         visualisation = graph(df, figure_size)
-    elif vis_input['Visualisation'] == "Correlation":
+    elif vis_input['visualisation'] == "Correlation":
+        # Subset the dataframe, take only required columns
+        df = df[[*vis_input['columns']]]
         visualisation = corr_graph(df, figure_size)
     # Case where an unexpected visualisation has been requested
     else:
