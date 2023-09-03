@@ -117,6 +117,7 @@ def other_bar_graphs(df, multiplexes, figure_size):
     df.groupby('DAB_Multiplex').sum().iloc[:, 1:].plot(kind='bar', ax=axes[0, 1])
     axes[0, 1].set_title('Counts of Service Labels by DAB_Multiplex')
     axes[0, 1].set_ylabel('Count')
+    axes[0, 1].get_legend().remove()
 
     # Plot the number of unique sites grouped by DAB_Multiplex
     df.groupby('DAB_Multiplex')['Site'].nunique().plot(kind='bar', ax=axes[1, 0])
@@ -126,9 +127,12 @@ def other_bar_graphs(df, multiplexes, figure_size):
     # Remove the fourth subplot
     fig.delaxes(axes[1, 1])
 
-    # Create a single legend in the bottom right
+    # Get the legend labels which are used by both subplots
     handles, labels = axes[0, 0].get_legend_handles_labels()
-    fig.legend(handles=handles, labels=labels, loc='lower right', ncol=2)
+    axes[0, 0].get_legend().remove()
+    # Create a single legend in the bottom right
+    fig.legend(handles=handles, labels=labels,
+                ncol=2, bbox_to_anchor=(0.97, 0.45))
 
     plt.tight_layout()
 
