@@ -29,7 +29,7 @@ def produce_stats(df_mp):
     summary_stats['Date']['mode'] = df_mp.loc[date_mask]['Power(kW)'].mode()[0]
     return summary_stats
 
-def generate_summary_stats(df, figure_size):
+def summary_stats(df, figure_size):
     """Produce plot showing the mean, median, and mode of
     Power(kW) for the C18A, C18F, C188 DAB multiplexes where
     the year is more than 2001 and site height is greater than 75m"""
@@ -66,7 +66,7 @@ def generate_summary_stats(df, figure_size):
     return fig
 
 
-def generate_graph(df, figure_size):
+def graph(df, figure_size):
     """4.	Produce a suitable graph that display the following information from the
 three DAB multiplexes that you extracted earlier: C18A, C18F, C188:
 Site, Freq, Block, Serv Label1, Serv Label2, Serv Label3, Serv label4, Serv Label10 
@@ -77,7 +77,7 @@ You may need to consider how you group this data to make visualisation feasible.
     #return fig
 
 
-def generate_corr_graph(df, figure_size):
+def corr_graph(df, figure_size):
     """5.	Determine if there is any significant correlation between the
 Freq, Block, Serv Label1, Serv Label2, Serv Label3, Serv label4,Serv Label10 
 used by the extracted DAB stations.  
@@ -96,11 +96,11 @@ def handler(vis_input):
     if vis_input['Visualisation'] == "Summary Statistics":
         # Subset the dataframe, take only required columns
         df = df[['C18A', 'C18F', 'C188', 'Date', 'Site Height', 'Power(kW)']]
-        visualisation = generate_summary_stats(df, figure_size)
+        visualisation = summary_stats(df, figure_size)
     elif vis_input['Visualisation'] == "Bar Graphs":
-        visualisation = generate_graph(df, figure_size)
+        visualisation = graph(df, figure_size)
     elif vis_input['Visualisation'] == "Correlation":
-        visualisation = generate_corr_graph(df, figure_size)
+        visualisation = corr_graph(df, figure_size)
     # Case where an unexpected visualisation has been requested
     else:
         return None
