@@ -199,6 +199,9 @@ def handler(vis_input):
         df = df[[*multiplexes, 'Date', 'Site Height', 'Power(kW)']]
         visualisation = summary_stats(df, multiplexes, figure_size)
     elif vis_input['visualisation'] == "Other Bar Graphs":
+        # Subset the dataframe, take only required columns
+        df = df[[*multiplexes, 'Freq', 'Block', 'Serv Label1', 'Serv Label2',
+                 'Serv Label3', 'Serv Label4','Serv Label10']]
         visualisation = other_bar_graphs(df, multiplexes, figure_size)
     elif vis_input['visualisation'] == "Correlation":
         # Subset the dataframe, take only required columns
