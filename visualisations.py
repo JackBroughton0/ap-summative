@@ -94,7 +94,7 @@ def get_mp_column(df, multiplexes):
     return df
 
 
-def graph(df, multiplexes, figure_size):
+def other_bar_graphs(df, multiplexes, figure_size):
     """Produce plot showing counts of requested variables'
     values for the requested DAB Multiplexes"""
     # Create single DAB Multiplex column to facilitate groupby
@@ -173,7 +173,7 @@ def handler(vis_input):
     elif vis_input['visualisation'] == "Other Bar Graphs":
         # Subset the dataframe, take only required columns
         df = df[[*multiplexes, *vis_input['columns']]]
-        visualisation = graph(df, multiplexes, figure_size)
+        visualisation = other_bar_graphs(df, multiplexes, figure_size)
     elif vis_input['visualisation'] == "Correlation":
         # Do not accept Site as a variable for this graph
         if 'Site' in vis_input['columns']:
