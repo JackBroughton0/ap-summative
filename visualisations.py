@@ -13,8 +13,8 @@ def generate_summary_stats(df):
     df['Power(kW)'] = df['Power(kW)'].str.replace(',', '').astype(float)
 
     for multiplex in ['C18A', 'C18F', 'C188']:
-        site_height_mask = (df[multiplex]==1) & (df['Site Height'] > 75)
-        date_mask = (df[multiplex]==1) & (df['Date'].dt.year >= 2001)
+        site_height_mask = (df[multiplex]==multiplex) & (df['Site Height'] > 75)
+        date_mask = (df[multiplex]==multiplex) & (df['Date'].dt.year >= 2001)
 
         # Get mean, median, and mode where site height is greater than 75
         site_ht_power_mean = df.loc[site_height_mask]['Power(kW)'].mean()
