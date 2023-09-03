@@ -1,3 +1,4 @@
+import os
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
@@ -152,7 +153,7 @@ class MyApplication:
         """Read the user input CSV files"""
         # Request the antenna data set
         antenna_path = filedialog.askopenfilename(
-            initialdir=r"C:\Computer Science\Advanced Programming\Formative\Data sets",
+            initialdir=os.getcwd(),
             title="Select the Antenna data",
             filetypes=(("csv file", "*.csv"),))
         # Check if the user canceled or no file or the wrong file was selected
@@ -165,7 +166,7 @@ class MyApplication:
             return None, None
         # Request the params data set
         params_path = filedialog.askopenfilename(
-            initialdir=r"C:\Computer Science\Advanced Programming\Formative\Data sets",
+            initialdir=os.getcwd(),
             title="Select the Params data",
             filetypes=(("csv file", "*.csv"),))
         # Check if the user canceled or no file or the wrong file was selected
@@ -195,7 +196,7 @@ class MyApplication:
         """Read the formatted json file"""
         # Request the formatted json data
         json_file = filedialog.askopenfilename(
-            initialdir=r"C:\Computer Science\Advanced Programming\Formative\Data sets",
+            initialdir=os.getcwd(),
             title="Select json file",
             filetypes=(("json files", "*.json"),))
         return json_file

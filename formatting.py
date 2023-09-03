@@ -201,7 +201,3 @@ def handler(antenna_path, params_path):
     upload_data = format_json(df_out)
     return upload_data
 
-if __name__ == '__main__':
-    antenna_path = r'C:\Users\jbrou\Advanced Programming\OL6 AP 2223 Data sets\Data sets/TxAntennaDAB.csv'
-    params_path = r'C:\Users\jbrou\Advanced Programming\OL6 AP 2223 Data sets\Data sets/TxParamsDAB.csv'
-    handler(antenna_path, params_path)
