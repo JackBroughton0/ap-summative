@@ -34,7 +34,8 @@ class MyApplication:
                        " Upload a clean json file or raw csv files"
                        " to be processed.\nThen generate"
                        " your data visualisations.")
-        description_label = tk.Label(self.root, text=description, font=("Helvetica", 14), bg='white')
+        description_label = tk.Label(self.root, text=description,
+                                     font=("Helvetica", 14), bg='white')
         description_label.pack(anchor='n')
 
     def create_upload_buttons(self):
@@ -54,13 +55,16 @@ class MyApplication:
 
     def create_message_label(self):
         """Create a label to display a message initially"""
-        self.message_label = tk.Label(self.canvas_widget, text="No visualisation available yet", font=("Helvetica", 12))
+        self.message_label = tk.Label(self.canvas_widget,
+                                      text="No visualisation available yet",
+                                      font=("Helvetica", 12))
         self.message_label.pack(fill=tk.BOTH, expand=True)
 
     def create_visualisation_canvas(self):
         """Create a canvas to display visualisations
         on the main window"""
-        self.canvas = FigureCanvasTkAgg(plt.figure(figsize=(6, 4)), master=self.root)
+        self.canvas = FigureCanvasTkAgg(plt.figure(figsize=(6, 4)),
+                                        master=self.root)
         self.canvas_widget = self.canvas.get_tk_widget()
         self.canvas_widget.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
@@ -68,26 +72,32 @@ class MyApplication:
         """Provide checkbuttons to determine which
         DAB multiplexes to generate visualisations for"""
         # DAB multiplex selection
-        dab_multiplex = tk.Label(self.visualisation_frame, text="Select DAB Multiplex:")
+        dab_multiplex = tk.Label(self.visualisation_frame,
+                                 text="Select DAB Multiplex:")
         dab_multiplex.grid(row=0, column=0, padx=10, sticky="w")
         # Check buttons for 'C18A', 'C18F', 'C188'
-        c18a_checkbox = ttk.Checkbutton(self.visualisation_frame, text="C18A", variable=self.c18a_var)
+        c18a_checkbox = ttk.Checkbutton(self.visualisation_frame,
+                                        text="C18A", variable=self.c18a_var)
         c18a_checkbox.grid(row=0, column=1, padx=5, pady=2, sticky="w")
-        c18f_checkbox = ttk.Checkbutton(self.visualisation_frame, text="C18F", variable=self.c18f_var)
+        c18f_checkbox = ttk.Checkbutton(self.visualisation_frame,
+                                        text="C18F", variable=self.c18f_var)
         c18f_checkbox.grid(row=0, column=2, padx=5, pady=2, sticky="w")
-        c188_checkbox = ttk.Checkbutton(self.visualisation_frame, text="C188", variable=self.c188_var)
+        c188_checkbox = ttk.Checkbutton(self.visualisation_frame,
+                                        text="C188", variable=self.c188_var)
         c188_checkbox.grid(row=0, column=3, padx=5, pady=2, sticky="w")
 
     def create_vis_combobox(self):
         """Create a combobox where the dropdown
         provides a list of the available visualisations"""
-        visualisation_label = tk.Label(self.visualisation_frame, text="Select Visualisation:")
-        visualisation_label.grid(row=1, column=0, padx=10, pady=(10,2), sticky="w")
+        visualisation_label = tk.Label(self.visualisation_frame,
+                                       text="Select Visualisation:")
+        visualisation_label.grid(row=1, column=0, padx=10,
+                                 pady=(10,2), sticky="w")
         # Instantiate combobox and set state to read only
         visualisation_options = ttk.Combobox(self.visualisation_frame,
                                             values=["Summary Statistics",
-                                                    "Correlation",
-                                                    "Bar Graphs"],
+                                                    "Bar Graphs",
+                                                    "Correlation"],
                                             textvariable=self.selected_visualisation,
                                             state="readonly")
         visualisation_options.grid(row=2, column=0, padx=10, pady=(2,50))
@@ -97,10 +107,12 @@ class MyApplication:
     def create_vars_listbox(self):
         """Create a listbox containing the variables
         that can be included in the visualisations"""
-        variables_label = tk.Label(self.visualisation_frame, text="Select Variables:")
+        variables_label = tk.Label(self.visualisation_frame,
+                                   text="Select Variables:")
         variables_label.grid(row=3, column=0, padx=10, pady=(5,1), sticky="w")
 
-        self.variables_listbox = tk.Listbox(self.visualisation_frame, selectmode=tk.MULTIPLE)
+        self.variables_listbox = tk.Listbox(self.visualisation_frame,
+                                            selectmode=tk.MULTIPLE)
         self.variables_listbox.grid(row=4, column=0, padx=10, pady=2)
         # Populate the Listbox with variables
         variables = ["Site", "Freq", "Block", "Serv Label1", "Serv Label2",
@@ -121,7 +133,9 @@ class MyApplication:
     def create_generate_button(self):
         """Create a button to allow visualisations
         to be displayed"""
-        generate_button = ttk.Button(self.visualisation_frame, text="Generate", command=self.generate_visualisation)
+        generate_button = ttk.Button(self.visualisation_frame,
+                                    text="Generate",
+                                    command=self.generate_visualisation)
         generate_button.grid(row=5, column=0, padx=10, pady=5)
     
     def create_widgets(self):
@@ -155,7 +169,8 @@ class MyApplication:
             return None, None
         if 'antenna' not in antenna_path.lower():
             # Give feedback to the user requesting correct file
-            messagebox.showinfo("Incorrect input file", "Please select the Antenna csv file")
+            messagebox.showinfo("Incorrect input file", 
+                                "Please select the Antenna csv file.")
             return None, None
         # Request the params data set
         params_path = filedialog.askopenfilename(
@@ -167,7 +182,8 @@ class MyApplication:
             return None, None
         if 'params' not in params_path.lower():
             # Give feedback to the user requesting correct file
-            messagebox.showinfo("Incorrect input file", "Please select the Params csv file")
+            messagebox.showinfo("Incorrect input file",
+                                "Please select the Params csv file.")
             return None, None
         return antenna_path, params_path
 
@@ -209,7 +225,8 @@ class MyApplication:
                 "Please proceed to the Data Visualizations tab.")
         else:
             # Give feedback to the user notifying unsuccessful upload
-            messagebox.showinfo("No file selected", "Please select your json file")
+            messagebox.showinfo("No file selected",
+                                "Please select your json file.")
 
     def generate_visualisation(self):
         """Pass the selected visualisation options to
@@ -217,7 +234,8 @@ class MyApplication:
         # Get the indices of the selected variables
         selected_indices = self.variables_listbox.curselection()
         # Retrieve the selected variable names
-        selected_vars = [self.variables_listbox.get(idx) for idx in selected_indices]   
+        selected_vars = [self.variables_listbox.get(idx)
+                         for idx in selected_indices]
         # Store the user's visualisation requirements
         vis_input = {"C18A": self.c18a_var.get(),
                      "C18F": self.c18f_var.get(),
@@ -226,6 +244,9 @@ class MyApplication:
                      "Columns": selected_vars}
         # Create the visualisation in the visualisations module
         vis = visualisations.handler(vis_input)
+        if not vis:
+            messagebox.showinfo("Unexpected visualisation request",
+                                 "Please select a valid visualisation.")
 
 
         # Sample data for demonstration

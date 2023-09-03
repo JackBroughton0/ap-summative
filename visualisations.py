@@ -58,5 +58,12 @@ def handler(vis_input):
         # Subset the dataframe, take only required columns
         df = df[['C18A', 'C18F', 'C188', 'Date', 'Site Height', 'Power(kW)']]
         visualisation = generate_summary_stats(df)
+    elif vis_input['Visualisation'] == "Bar Graphs":
+        pass
+    elif vis_input['Visualisation'] == "Correlation":
+        pass
+    # Case where an unexpected visualisation has been requested
+    else:
+        return None
     return visualisation
 
