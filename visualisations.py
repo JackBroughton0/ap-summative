@@ -72,6 +72,9 @@ three DAB multiplexes that you extracted earlier: C18A, C18F, C188:
 Site, Freq, Block, Serv Label1, Serv Label2, Serv Label3, Serv label4, Serv Label10 
 You may need to consider how you group this data to make visualisation feasible.
 """
+    print('hold')
+    
+    #return fig
 
 
 def generate_corr_graph(df, figure_size):
@@ -79,6 +82,9 @@ def generate_corr_graph(df, figure_size):
 Freq, Block, Serv Label1, Serv Label2, Serv Label3, Serv label4,Serv Label10 
 used by the extracted DAB stations.  
 You will need to select an appropriate visualisation to demonstrate this."""
+    print('hold')
+    
+    #return fig
 
 
 def handler(vis_input):
@@ -92,9 +98,9 @@ def handler(vis_input):
         df = df[['C18A', 'C18F', 'C188', 'Date', 'Site Height', 'Power(kW)']]
         visualisation = generate_summary_stats(df, figure_size)
     elif vis_input['Visualisation'] == "Bar Graphs":
-        pass
+        visualisation = generate_graph(df, figure_size)
     elif vis_input['Visualisation'] == "Correlation":
-        pass
+        visualisation = generate_corr_graph(df, figure_size)
     # Case where an unexpected visualisation has been requested
     else:
         return None
