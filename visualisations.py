@@ -55,15 +55,14 @@ def generate_summary_stats(df, figure_size):
         for i, category in enumerate(categories):
             ax.bar(x + i * bar_width, data[category], bar_width, label=category, color=colors[i])
 
-        ax.set_xlabel('DAB Multiplexes')
+        ax.set_xlabel('DAB Multiplex')
         ax.set_ylabel('Power(kW)')
-        ax.set_title(f"Summary Statistics for {variable} Power")
+        ax.set_title(f"DAB Multiplex Power where {variable} > {'the year 2000' if variable=='Date' else '75m'}")
         ax.set_xticks(x + bar_width)
         ax.set_xticklabels(multiplexes)
         ax.legend()
 
     plt.tight_layout()  # Ensure subplots don't overlap
-
     return fig
 
 
