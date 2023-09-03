@@ -238,16 +238,16 @@ class MyApplication:
         if not vis:
             messagebox.showerror("Unexpected visualisation request",
                                  "Please select a valid visualisation.")
-
-        # Destroy the initial 'No visualisation available yet' message
-        self.message_label.destroy()
-        # Display the visualisation
-        self.canvas = FigureCanvasTkAgg(vis,
-                                        master=self.visualisation_frame)
-        self.canvas_widget = self.canvas.get_tk_widget()
-        # Configure grid options for self.canvas_widget
-        self.canvas_widget.grid(column=4, row=0, rowspan=6,
-                                padx=(5,0), pady=0, sticky='nsew')
+        else:
+            # Destroy the initial 'No visualisation available yet' message
+            self.message_label.destroy()
+            # Display the visualisation
+            self.canvas = FigureCanvasTkAgg(vis,
+                                            master=self.visualisation_frame)
+            self.canvas_widget = self.canvas.get_tk_widget()
+            # Configure grid options for self.canvas_widget
+            self.canvas_widget.grid(column=4, row=0, rowspan=6,
+                                    padx=(5,0), pady=0, sticky='nsew')
 
 
 if __name__ == '__main__':
