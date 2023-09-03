@@ -19,7 +19,7 @@ def format_dataframe(df, vis_input):
     for mp in multiplexes:
         df_sub = df.loc[df[mp] == mp].copy()
         df_list.append(df_sub)
-    df = pd.concat(df_list)
+    df = pd.concat(df_list).reset_index(drop=True)
     return df, multiplexes
 
 
@@ -82,6 +82,17 @@ def summary_stats(df, multiplexes, figure_size):
     return fig
 
 
+def get_mp_column(df, multiplexes):
+    """Create one column to flag all DAB Multiplexes.
+    Drop original DAB Multiplex columns"""
+    df['DAB_Multiplex'] = ''
+    for mp in multiplexes:
+        df.loc[df[mp]==mp, 'DAB_Multiplex'] = mp
+        # Drop the original DAB Multiplex flag
+        df.drop(mp, axis=1, inplace=True)
+    return df
+
+
 def graph(df, multiplexes, figure_size):
     """4.	Produce a suitable graph that display the following information from the
 three DAB multiplexes that you extracted earlier: C18A, C18F, C188:
@@ -89,11 +100,9 @@ Site, Freq, Block, Serv Label1, Serv Label2, Serv Label3, Serv label4, Serv Labe
 You may need to consider how you group this data to make visualisation feasible.
 """
     # Create single DAB Multiplex column to facilitate groupby
-    df['DAB_Multiplex'] = ''
+    df = get_mp_column(df, multiplexes)
     # Group data by multiplex and get counts for each multiplex
-    C18A_counts = df.groupby('C18A').size()
-    C18F_counts = df.groupby('C18F').size()
-    C188_counts = df.groupby('C188').size()
+    multiplex_counts = df.groupby('DAB_Multiplex').size()
 
     # Plot the grouped bar chart
     fig, ax = plt.subplots()
@@ -101,10 +110,9 @@ You may need to consider how you group this data to make visualisation feasible.
     ax.set_xlabel('Multiplex')
     ax.set_ylabel('Count')
     ax.set_title('DAB Multiplex Distribution')
-    plt.xticks(rotation=0)  # Rotate x-axis labels if needed
+    plt.xticks(rotation=45)
 
-    # Return the figure and axis objects
-    return fig, ax
+    return fig
 
 
 def corr_graph(df, multiplexes, figure_size):
@@ -112,8 +120,9 @@ def corr_graph(df, multiplexes, figure_size):
 Freq, Block, Serv Label1, Serv Label2, Serv Label3, Serv label4,Serv Label10 
 used by the extracted DAB stations.  
 You will need to select an appropriate visualisation to demonstrate this."""
+    # Create single DAB Multiplex column to facilitate groupby
+    df = get_mp_column(df, multiplexes)
     print('hold')
-    
     #return fig
 
 
