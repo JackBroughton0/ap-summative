@@ -126,15 +126,9 @@ def other_bar_graphs(df, multiplexes, figure_size):
     # Remove the fourth subplot
     fig.delaxes(axes[1, 1])
 
-    # Combine the legends from the first two plots into one legend
+    # Create a single legend in the bottom right
     handles, labels = axes[0, 0].get_legend_handles_labels()
-    handles2, labels2 = axes[0, 1].get_legend_handles_labels()
-
-    # Create a single legend in the bottom right with two columns
-    legend1 = fig.legend(handles=handles + handles2, labels=labels + labels2, loc='lower right', ncol=2)
-
-    # Add the legend to the figure
-    fig.add_artist(legend1)
+    fig.legend(handles=handles, labels=labels, loc='lower right', ncol=2)
 
     plt.tight_layout()
 
