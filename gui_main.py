@@ -239,6 +239,11 @@ class MyApplication:
                      "C188": self.c188_var.get(),
                      "visualisation": self.selected_visualisation.get(),
                      "columns": selected_vars}
+        # Warn that Site will not be displayed for Correlation
+        if vis_input['visualisation'] == 'Correlation' and 'Site' in vis_input['columns']:
+            messagebox.showwarning("Invalid variable selected",
+                                   "The 'Site' variable is not available"
+                                   " for the 'Correlation' visualisation")
         # Create the visualisation in the visualisations module
         vis = visualisations.handler(vis_input)
         if not vis:
