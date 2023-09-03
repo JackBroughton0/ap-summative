@@ -94,11 +94,8 @@ def get_mp_column(df, multiplexes):
 
 
 def graph(df, multiplexes, figure_size):
-    """4.	Produce a suitable graph that display the following information from the
-three DAB multiplexes that you extracted earlier: C18A, C18F, C188:
-Site, Freq, Block, Serv Label1, Serv Label2, Serv Label3, Serv label4, Serv Label10 
-You may need to consider how you group this data to make visualisation feasible.
-"""
+    """Produce plot showing counts of requested variables'
+    values for the requested DAB Multiplexes"""
     # Create single DAB Multiplex column to facilitate groupby
     df = get_mp_column(df, multiplexes)
     # Group data by multiplex and get counts for each multiplex
