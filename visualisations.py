@@ -119,8 +119,35 @@ used by the extracted DAB stations.
 You will need to select an appropriate visualisation to demonstrate this."""
     # Create single DAB Multiplex column to facilitate groupby
     df = get_mp_column(df.copy(), multiplexes)
-    print('hold')
-    #return fig
+    # Function to calculate Cramér's V
+    def cramers_v(x, y):
+        confusion_matrix = pd.crosstab(x, y)
+        chi2 = 0
+        n = confusion_matrix.values.sum()
+        rows, cols = confusion_matrix.shape
+
+        for i in range(rows):
+            for j in range(cols):
+                expected = (confusion_matrix.iloc[i].sum() * confusion_matrix.iloc[:, j].sum()) / n
+                chi2 += (confusion_matrix.iloc[i, j] - expected) ** 2 / expected
+
+        cramers_v = np.sqrt(chi2 / (n * (min(rows, cols) - 1)))
+        return cramers_v
+
+    # Calculate Cramér's V matrix for all pairs of columns
+    cramer_matrix = pd.DataFrame(index=df.columns, columns=df.columns)
+
+    for col1 in df.columns:
+        for col2 in df.columns:
+            cramer_matrix.loc[col1, col2] = cramers_v(df[col1], df[col2])
+
+    # Create a heatmap of Cramér's V values
+    plt.figure(figsize=figure_size)
+    sns.heatmap(cramer_matrix.astype(float), annot=True, cmap='coolwarm', fmt=".2f")
+    plt.title("Cramér's V Heatmap")
+    # Convert the heatmap to a figure
+    fig = plt.gcf()
+    return fig
 
 
 def handler(vis_input):
