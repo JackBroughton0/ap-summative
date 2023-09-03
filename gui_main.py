@@ -14,7 +14,7 @@ class MyApplication:
     def __init__(self, root):
         self.root = root
         self.root.title("Data Visualisation App")
-        self.root.geometry("1200x800")
+        self.root.geometry("1400x800")
         self.configure_style()
         self.selected_visualisation = tk.StringVar()
         self.c18a_var = tk.BooleanVar()
@@ -126,10 +126,11 @@ class MyApplication:
         """Create a button to allow visualisations
         to be displayed"""
         generate_button = ttk.Button(self.visualisation_frame,
-                                    text="Generate",
-                                    command=self.generate_visualisation)
-        generate_button.grid(row=5, column=0, padx=10, pady=5)
-    
+                                    text="Generate", padding=(10, 5),
+                                    command=self.generate_visualisation,
+                                    width=12)
+        generate_button.grid(row=5, column=0)
+
     def create_widgets(self):
         """Create widgets for the user interface and
         organise positioning"""
@@ -238,13 +239,15 @@ class MyApplication:
             messagebox.showerror("Unexpected visualisation request",
                                  "Please select a valid visualisation.")
 
-        # Hide the initial 'No visualisation available yet' message
-        self.message_label.pack_forget()
+        # Destroy the initial 'No visualisation available yet' message
+        self.message_label.destroy()
         # Display the visualisation
         self.canvas = FigureCanvasTkAgg(vis,
-                                        master=self.root)
+                                        master=self.visualisation_frame)
         self.canvas_widget = self.canvas.get_tk_widget()
-        self.canvas_widget.pack(side=tk.RIGHT, fill=tk.X, expand=True)
+        # Configure grid options for self.canvas_widget
+        self.canvas_widget.grid(column=4, row=0, rowspan=6,
+                                padx=(5,0), pady=0, sticky='nsew')
 
 
 if __name__ == '__main__':

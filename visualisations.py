@@ -29,7 +29,7 @@ def produce_stats(df_mp):
     summary_stats['Date']['mode'] = df_mp.loc[date_mask]['Power(kW)'].mode()[0]
     return summary_stats
 
-def generate_summary_stats(df):
+def generate_summary_stats(df, figure_size):
     """Produce plot showing the mean, median, and mode of
     Power(kW) for the C18A, C18F, C188 DAB multiplexes where
     the year is more than 2001 and site height is greater than 75m"""
@@ -43,7 +43,7 @@ def generate_summary_stats(df):
     data = {category: [multiplex_stats[m]['Site Height'][category] for m in multiplexes] for category in categories}
 
     # Create a figure with two subplots
-    fig, axes = plt.subplots(1, 2, figsize=(6, 4))
+    fig, axes = plt.subplots(1, 2, figsize=figure_size)
     for idx, variable in enumerate(['Date', 'Site Height']):
         data = {category: [multiplex_stats[m][variable][category] for m in multiplexes] for category in categories}
         ax = axes[idx]
@@ -67,7 +67,7 @@ def generate_summary_stats(df):
     return fig
 
 
-def generate_graph(df):
+def generate_graph(df, figure_size):
     """4.	Produce a suitable graph that display the following information from the
 three DAB multiplexes that you extracted earlier: C18A, C18F, C188:
 Site, Freq, Block, Serv Label1, Serv Label2, Serv Label3, Serv label4, Serv Label10 
@@ -75,7 +75,7 @@ You may need to consider how you group this data to make visualisation feasible.
 """
 
 
-def generate_corr_graph(df):
+def generate_corr_graph(df, figure_size):
     """5.	Determine if there is any significant correlation between the
 Freq, Block, Serv Label1, Serv Label2, Serv Label3, Serv label4,Serv Label10 
 used by the extracted DAB stations.  
@@ -85,11 +85,13 @@ You will need to select an appropriate visualisation to demonstrate this."""
 def handler(vis_input):
     # Get the data from MongoDB
     df = mongodb_interaction.retrieve_from_mongo()
+    # Get standard figure size
+    figure_size = (10, 5)
     # Determine the correct visualisation
     if vis_input['Visualisation'] == "Summary Statistics":
         # Subset the dataframe, take only required columns
         df = df[['C18A', 'C18F', 'C188', 'Date', 'Site Height', 'Power(kW)']]
-        visualisation = generate_summary_stats(df)
+        visualisation = generate_summary_stats(df, figure_size)
     elif vis_input['Visualisation'] == "Bar Graphs":
         pass
     elif vis_input['Visualisation'] == "Correlation":
