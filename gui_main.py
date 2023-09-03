@@ -1,18 +1,161 @@
-import os
-import pandas as pd
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
 from tkinter import messagebox
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import pandas as pd
+
 import formatting
 import mongodb_interaction
 import visualisations
 
-
 class MyApplication:
-    def __init__(self):
-        self.root = tk.Tk()
-        self.setup_ui()
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Data Visualisation App")
+        self.root.geometry("950x600")
+        self.configure_style()
+        self.selected_visualisation = tk.StringVar()
+        self.c18a_var = tk.BooleanVar()
+        self.c18f_var = tk.BooleanVar()
+        self.c188_var = tk.BooleanVar()
+        self.create_widgets()
+
+    def configure_style(self):
+        # Configure the background color to light blue
+        self.root.configure(bg="light blue")
+
+    def create_description(self):
+        """Write and format the description for
+          the app and position at the top of the window"""
+        # Description of the app's functionality and how to use it
+        description = ("Visualise your DAB radio stations data!\n"
+                       " Upload a clean json file or raw csv files"
+                       " to be processed.\nThen generate"
+                       " your data visualisations.")
+        description_label = tk.Label(self.root, text=description,
+                                     font=("Helvetica", 14), bg='white')
+        description_label.pack(anchor='n')
+
+    def create_upload_buttons(self):
+        """Create buttons to allow the user to upload their
+        data, one for clean data and one for raw data"""
+        # Clean and Upload button
+        clean_raw_button = ttk.Button(self.root, text="Clean and Upload",
+                                      padding=(10, 5), width=20,
+                                      command=self.clean_file)
+        clean_raw_button.pack(anchor='nw')
+
+        # Upload JSON Button
+        upload_json_button = ttk.Button(self.root, text="Upload JSON",
+                                        padding=(10, 5), width=20,
+                                        command=self.save_json_file)
+        upload_json_button.pack(anchor='nw')
+
+    def create_message_label(self):
+        """Create a label to display a message initially"""
+        self.message_label = tk.Label(self.canvas_widget,
+                                      text="No visualisation available yet",
+                                      font=("Helvetica", 12))
+        self.message_label.pack(fill=tk.BOTH, expand=True)
+
+    def create_visualisation_canvas(self):
+        """Create a canvas to display visualisations
+        on the main window"""
+        self.canvas = FigureCanvasTkAgg(plt.figure(figsize=(6, 4)),
+                                        master=self.root)
+        self.canvas_widget = self.canvas.get_tk_widget()
+        self.canvas_widget.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+
+    def create_dab_checkbuttons(self):
+        """Provide checkbuttons to determine which
+        DAB multiplexes to generate visualisations for"""
+        # DAB multiplex selection
+        dab_multiplex = tk.Label(self.visualisation_frame,
+                                 text="Select DAB Multiplex:")
+        dab_multiplex.grid(row=0, column=0, padx=10, sticky="w")
+        # Check buttons for 'C18A', 'C18F', 'C188'
+        c18a_checkbox = ttk.Checkbutton(self.visualisation_frame,
+                                        text="C18A", variable=self.c18a_var)
+        c18a_checkbox.grid(row=0, column=1, padx=5, pady=2, sticky="w")
+        c18f_checkbox = ttk.Checkbutton(self.visualisation_frame,
+                                        text="C18F", variable=self.c18f_var)
+        c18f_checkbox.grid(row=0, column=2, padx=5, pady=2, sticky="w")
+        c188_checkbox = ttk.Checkbutton(self.visualisation_frame,
+                                        text="C188", variable=self.c188_var)
+        c188_checkbox.grid(row=0, column=3, padx=5, pady=2, sticky="w")
+
+    def create_vis_combobox(self):
+        """Create a combobox where the dropdown
+        provides a list of the available visualisations"""
+        visualisation_label = tk.Label(self.visualisation_frame,
+                                       text="Select Visualisation:")
+        visualisation_label.grid(row=1, column=0, padx=10,
+                                 pady=(10,2), sticky="w")
+        # Instantiate combobox and set state to read only
+        visualisation_options = ttk.Combobox(self.visualisation_frame,
+                                            values=["Summary Statistics",
+                                                    "Bar Graphs",
+                                                    "Correlation"],
+                                            textvariable=self.selected_visualisation,
+                                            state="readonly")
+        visualisation_options.grid(row=2, column=0, padx=10, pady=(2,50))
+        # Set to the client's initial information needs
+        visualisation_options.set("Summary Statistics")
+
+    def create_vars_listbox(self):
+        """Create a listbox containing the variables
+        that can be included in the visualisations"""
+        variables_label = tk.Label(self.visualisation_frame,
+                                   text="Select Variables:")
+        variables_label.grid(row=3, column=0, padx=10, pady=(5,1), sticky="w")
+
+        self.variables_listbox = tk.Listbox(self.visualisation_frame,
+                                            selectmode=tk.MULTIPLE)
+        self.variables_listbox.grid(row=4, column=0, padx=10, pady=2)
+        # Populate the Listbox with variables
+        variables = ["Site", "Freq", "Block", "Serv Label1", "Serv Label2",
+                      "Serv Label3", "Serv Label4", "Serv Label10"]
+        for variable in variables:
+            self.variables_listbox.insert(tk.END, variable)
+
+    def format_visual_frame(self):
+        """Organise the Data Visualisation Frame by
+        creating and positioning the necessary widgets"""
+        # Provide DAB multiplex options 
+        self.create_dab_checkbuttons()
+        # Provide visualisation type options
+        self.create_vis_combobox()
+        # Provide variables options
+        self.create_vars_listbox()
+
+    def create_generate_button(self):
+        """Create a button to allow visualisations
+        to be displayed"""
+        generate_button = ttk.Button(self.visualisation_frame,
+                                    text="Generate",
+                                    command=self.generate_visualisation)
+        generate_button.grid(row=5, column=0, padx=10, pady=5)
+    
+    def create_widgets(self):
+        """Create widgets for the user interface and
+        organise positioning"""
+        # Create a description of the app
+        self.create_description()
+        # Create buttons to allow file uploads
+        self.create_upload_buttons()
+        # Canvas for Matplotlib plots
+        self.create_visualisation_canvas()
+        # Display a message before the first visualisation is created
+        self.create_message_label()
+        # Data Visualisations Section
+        self.visualisation_frame = ttk.Frame(self.root)
+        self.visualisation_frame.pack(fill=tk.BOTH, expand=True)
+        # Organise the Data Visualisation frame
+        self.format_visual_frame()
+        # Create generate button to display visualisations
+        self.create_generate_button()
 
     def get_csv_files(self):
         """Read the user input CSV files"""
@@ -26,7 +169,8 @@ class MyApplication:
             return None, None
         if 'antenna' not in antenna_path.lower():
             # Give feedback to the user requesting correct file
-            messagebox.showinfo("Incorrect input file", "Please select the Antenna csv file")
+            messagebox.showinfo("Incorrect input file", 
+                                "Please select the Antenna csv file.")
             return None, None
         # Request the params data set
         params_path = filedialog.askopenfilename(
@@ -38,7 +182,8 @@ class MyApplication:
             return None, None
         if 'params' not in params_path.lower():
             # Give feedback to the user requesting correct file
-            messagebox.showinfo("Incorrect input file", "Please select the Params csv file")
+            messagebox.showinfo("Incorrect input file",
+                                "Please select the Params csv file.")
             return None, None
         return antenna_path, params_path
 
@@ -80,67 +225,50 @@ class MyApplication:
                 "Please proceed to the Data Visualizations tab.")
         else:
             # Give feedback to the user notifying unsuccessful upload
-            messagebox.showinfo("No file selected", "Please select your json file")
+            messagebox.showinfo("No file selected",
+                                "Please select your json file.")
 
-    def get_frames_main(self, window):
-        """Get frames to contain widgets on main window"""
-        # Create a frame to contain the description
-        description_frame = tk.Frame(window, borderwidth=5, bg="light blue")
-        description_frame.grid(row=0, column=0)
-        # Create a Notebook widget to contain the tabs
-        notebook = ttk.Notebook(window)
-        notebook.grid(row=1, column=0, padx=10, pady=10)
-        # Create two frames (tabs) to add to the Notebook widget
-        data_upload_tab = ttk.Frame(notebook, width=400, height=250)
-        data_vis_tab = ttk.Frame(notebook, width=400, height=250)
-        notebook.add(data_upload_tab, text="Upload Data")
-        notebook.add(data_vis_tab, text="Data Visualisations")
-        return description_frame, data_upload_tab, data_vis_tab
+    def generate_visualisation(self):
+        """Pass the selected visualisation options to
+        the visualisations module and plot the outputs"""
+        # Get the indices of the selected variables
+        selected_indices = self.variables_listbox.curselection()
+        # Retrieve the selected variable names
+        selected_vars = [self.variables_listbox.get(idx)
+                         for idx in selected_indices]
+        # Store the user's visualisation requirements
+        vis_input = {"C18A": self.c18a_var.get(),
+                     "C18F": self.c18f_var.get(),
+                     "C188": self.c188_var.get(),
+                     "Visualisation": self.selected_visualisation.get(),
+                     "Columns": selected_vars}
+        # Create the visualisation in the visualisations module
+        vis = visualisations.handler(vis_input)
+        if not vis:
+            messagebox.showinfo("Unexpected visualisation request",
+                                 "Please select a valid visualisation.")
 
-    def get_description(self, description_frame):
-        """Write a brief description of the gui"""
-        text = tk.Text(description_frame, height=3)
-        text.insert(tk.INSERT, "Please upload your clean data before"
-                    " proceeding to the data visualisations tab.\n"
-                    "If your data needs cleaning first, please click the"
-                    " 'Upload and Clean' button.")
-        text.pack(anchor=tk.CENTER)
 
-    def get_upload_buttons(self, data_upload_tab):
-        """Initialise the data upload buttons"""
-        # Create a button to allow the user to upload and clean their data
-        upload_and_clean = tk.Button(data_upload_tab, text='Upload and Clean',
-                                     width=10, height=3, padx=50, pady=50, command=self.clean_file)
-        upload_and_clean.grid(row=0, rowspan=30, column=0, columnspan=20)
-        # Create a button to allow the user to upload and save their data
-        upload_and_save = tk.Button(data_upload_tab, text='Upload and Save',
-                                    width=10, height=3, padx=50, pady=50, command=self.save_json_file)
-        upload_and_save.grid(row=30, rowspan=30, column=0, columnspan=20)
+        # Sample data for demonstration
+        x = [1, 2, 3, 4, 5]
+        y = [5, 4, 3, 2, 1]
 
-    def get_vis_buttons(self, data_vis_tab):
-        """Create radio buttons to enable the user to
-        select different types of visualisations and statistics"""
-        var = tk.IntVar()
-        # Radio buttons: select only 1 from 3
-        R1 = tk.Radiobutton(data_vis_tab, text="Correlations", variable=var, value=1)
-        R1.grid(row=0, column=0)
-        R2 = tk.Radiobutton(data_vis_tab, text="Descriptive Statistics", variable=var, value=2)
-        R2.grid(row=1, column=0)
-        R3 = tk.Radiobutton(data_vis_tab, text="Bar Charts", variable=var, value=3)
-        R3.grid(row=2, column=0)
+        # Clear the previous plot (if any)
+        plt.clf()
 
-    def setup_ui(self):
-        self.s = ttk.Style()
-        self.s.configure('mainFrame.TFrame', background='light blue')
-        description_frame, data_upload_tab, data_vis_tab = self.get_frames_main(self.root)
-        self.get_description(description_frame)
-        self.get_upload_buttons(data_upload_tab)
-        self.get_vis_buttons(data_vis_tab)
+        # Create a simple line plot
+        plt.plot(x, y, marker='o', linestyle='-')
+        plt.title("Sample Line Plot")
+        plt.xlabel("X-axis")
+        plt.ylabel("Y-axis")
 
-    def run(self):
-        self.root.mainloop()
+        # Hide the message label and display the visualisation
+        self.message_label.pack_forget()
+        self.canvas_widget.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        self.canvas.draw()
+
 
 if __name__ == '__main__':
-    app = MyApplication()
-    app.run()
-
+    root = tk.Tk()
+    app = MyApplication(root)
+    root.mainloop()
