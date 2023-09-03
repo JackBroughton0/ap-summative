@@ -224,6 +224,9 @@ class MyApplication:
                      "C188": self.c188_var.get(),
                      "Visualisation": self.selected_visualisation.get(),
                      "Columns": selected_vars}
+        # Create the visualisation in the visualisations module
+        vis = visualisations.handler(vis_input)
+
 
         # Sample data for demonstration
         x = [1, 2, 3, 4, 5]

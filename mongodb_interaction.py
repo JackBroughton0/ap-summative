@@ -19,9 +19,10 @@ def clean_column_name(column_name):
     return cleaned_name
 
 
-def retrieve_from_mongo(collection):
+def retrieve_from_mongo():
     """Retrieve the cleaned and formatted data from MongoDB.
     This will be the input data for data visualisations"""
+    collection = connect_to_mongodb()
     # Get all the documents stored in the MongoDB collection
     all_documents = collection.find({})
     document_list = list(all_documents)

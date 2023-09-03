@@ -2,6 +2,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+import mongodb_interaction
+
 
 def generate_summary_stats(df):
     """Calculate the mean, median, and mode of Power(kW)
@@ -31,7 +33,6 @@ def generate_summary_stats(df):
         print(f"Mean Power(kW) where the year is greater than or equal to 2001: {date_power_mean}")
         print(f"Median Power(kW) where the year is greater than or equal to 2001: {date_power_median}")
         print(f"Mode Power(kW) where the year is greater than or equal to 2001: {date_power_mode}")
-        print('hold')
     return df
 
 
@@ -49,9 +50,13 @@ Freq, Block, Serv Label1, Serv Label2, Serv Label3, Serv label4,Serv Label10
 used by the extracted DAB stations.  
 You will need to select an appropriate visualisation to demonstrate this."""
 
+def handler(vis_input):
+    # Get the data from MongoDB
+    df = mongodb_interaction.retrieve_from_mongo()
+    # Determine the correct visualisation
+    if vis_input['Visualisation'] == "Summary Statistics":
+        # Subset the dataframe, take only required columns
+        df = df[['C18A', 'C18F', 'C188', 'Date', 'Site Height', 'Power(kW)']]
+        visualisation = generate_summary_stats(df)
+    return visualisation
 
-
-if __name__ == '__main__':
-    df = generate_summary_stats(df)
-    generate_graph(df)
-    generate_corr_graph(df)
