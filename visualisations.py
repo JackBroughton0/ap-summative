@@ -131,6 +131,9 @@ def corr_graph(df, multiplexes, figure_size):
                 chi2 += (confusion_matrix.iloc[i, j] - expected) ** 2 / expected
 
         cramers_v = np.sqrt(chi2 / (n * (min(rows, cols) - 1)))
+        # Case where Cramer's V has detected no association
+        if np.isnan(cramers_v):
+            return 0.0
         return cramers_v
 
     # Calculate Cramér's V matrix for all pairs of columns
@@ -138,7 +141,11 @@ def corr_graph(df, multiplexes, figure_size):
 
     for col1 in df.columns:
         for col2 in df.columns:
-            cramer_matrix.loc[col1, col2] = cramers_v(df[col1], df[col2])
+            # Case where cramers v would detect a perfect association
+            if df[col1].nunique() == 1 and df[col2].nunique() == 1:
+                cramer_matrix.loc[col1, col2] = 1.0
+            else:
+                cramer_matrix.loc[col1, col2] = cramers_v(df[col1], df[col2])
 
     # Create a heatmap of Cramér's V values
     plt.figure(figsize=figure_size)
