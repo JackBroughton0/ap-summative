@@ -107,6 +107,7 @@ def other_bar_graphs(df, multiplexes, figure_size):
 
     # Create subplots with 2 rows and 2 columns
     fig, axes = plt.subplots(2, 2, figsize=figure_size)
+
     # Plot the counts of each service label grouped by Freq
     df.groupby('Freq').sum().iloc[:, 1:].plot(kind='bar', ax=axes[0, 0])
     axes[0, 0].set_title('Counts of Service Labels by Freq')
@@ -124,8 +125,16 @@ def other_bar_graphs(df, multiplexes, figure_size):
 
     # Remove the fourth subplot
     fig.delaxes(axes[1, 1])
-    # Move the legend to the right of the bottom graph
-    axes[1, 0].legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
+
+    # Combine the legends from the first two plots into one legend
+    handles, labels = axes[0, 0].get_legend_handles_labels()
+    handles2, labels2 = axes[0, 1].get_legend_handles_labels()
+
+    # Create a single legend in the bottom right with two columns
+    legend1 = fig.legend(handles=handles + handles2, labels=labels + labels2, loc='lower right', ncol=2)
+
+    # Add the legend to the figure
+    fig.add_artist(legend1)
 
     plt.tight_layout()
 
@@ -190,13 +199,8 @@ def handler(vis_input):
         df = df[[*multiplexes, 'Date', 'Site Height', 'Power(kW)']]
         visualisation = summary_stats(df, multiplexes, figure_size)
     elif vis_input['visualisation'] == "Other Bar Graphs":
-        # Subset the dataframe, take only required columns
-        df = df[[*multiplexes, *vis_input['columns']]]
         visualisation = other_bar_graphs(df, multiplexes, figure_size)
     elif vis_input['visualisation'] == "Correlation":
-        # Do not accept Site as a variable for this graph
-        if 'Site' in vis_input['columns']:
-            vis_input['columns'].remove('Site')
         # Subset the dataframe, take only required columns
         df = df[[*multiplexes, *vis_input['columns']]]
         visualisation = corr_graph(df, multiplexes, figure_size)
