@@ -170,7 +170,7 @@ def handler(vis_input):
         # Subset the dataframe, take only required columns
         df = df[[*multiplexes, 'Date', 'Site Height', 'Power(kW)']]
         visualisation = summary_stats(df, multiplexes, figure_size)
-    elif vis_input['visualisation'] == "Bar Graphs":
+    elif vis_input['visualisation'] == "Other Bar Graphs":
         # Subset the dataframe, take only required columns
         df = df[[*multiplexes, *vis_input['columns']]]
         visualisation = graph(df, multiplexes, figure_size)

@@ -88,7 +88,7 @@ class MyApplication:
         # Instantiate combobox and set state to read only
         visualisation_options = ttk.Combobox(self.visualisation_frame,
                                             values=["Summary Statistics",
-                                                    "Bar Graphs",
+                                                    "Other Bar Graphs",
                                                     "Correlation"],
                                             textvariable=self.selected_visualisation,
                                             state="readonly")
