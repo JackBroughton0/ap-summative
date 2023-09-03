@@ -46,6 +46,7 @@ def produce_stats(df_mp):
     summary_stats['Date']['mode'] = df_mp.loc[date_mask]['Power(kW)'].mode()[0]
     return summary_stats
 
+
 def summary_stats(df, multiplexes, figure_size):
     """Produce plot showing the mean, median, and mode of
     Power(kW) for the C18A, C18F, C188 DAB multiplexes where
