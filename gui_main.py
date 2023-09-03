@@ -222,6 +222,12 @@ class MyApplication:
     def generate_visualisation(self):
         """Pass the selected visualisation options to
         the visualisations module and plot the outputs"""
+        # Check that at least one DAB multiplex has been selected
+        mp_list = [self.c18a_var.get(), self.c18f_var.get(), self.c188_var.get()]
+        if all(mp is False for mp in mp_list):
+            messagebox.showerror("No DAB Multiplex Selected", 
+                                 "Please select at least one DAB Multiplex")
+            return
         # Get the indices of the selected variables
         selected_indices = self.variables_listbox.curselection()
         # Retrieve the selected variable names
@@ -238,16 +244,16 @@ class MyApplication:
         if not vis:
             messagebox.showerror("Unexpected visualisation request",
                                  "Please select a valid visualisation.")
-        else:
-            # Destroy the initial 'No visualisation available yet' message
-            self.message_label.destroy()
-            # Display the visualisation
-            self.canvas = FigureCanvasTkAgg(vis,
-                                            master=self.visualisation_frame)
-            self.canvas_widget = self.canvas.get_tk_widget()
-            # Configure grid options for self.canvas_widget
-            self.canvas_widget.grid(column=4, row=0, rowspan=6,
-                                    padx=(5,0), pady=0, sticky='nsew')
+            return
+        # Destroy the initial 'No visualisation available yet' message
+        self.message_label.destroy()
+        # Display the visualisation
+        self.canvas = FigureCanvasTkAgg(vis,
+                                        master=self.visualisation_frame)
+        self.canvas_widget = self.canvas.get_tk_widget()
+        # Configure grid options for self.canvas_widget
+        self.canvas_widget.grid(column=4, row=0, rowspan=6,
+                                padx=(5,0), pady=0, sticky='nsew')
 
 
 if __name__ == '__main__':

@@ -29,11 +29,10 @@ def produce_stats(df_mp):
     summary_stats['Date']['mode'] = df_mp.loc[date_mask]['Power(kW)'].mode()[0]
     return summary_stats
 
-def summary_stats(df, figure_size):
+def summary_stats(df, multiplexes, figure_size):
     """Produce plot showing the mean, median, and mode of
     Power(kW) for the C18A, C18F, C188 DAB multiplexes where
     the year is more than 2001 and site height is greater than 75m"""
-    multiplexes = ['C18A', 'C18F', 'C188']
     # Create empty dict to store stats for all specified DAB multiplexes
     multiplex_stats = {}
     for multiplex in multiplexes:
@@ -66,18 +65,30 @@ def summary_stats(df, figure_size):
     return fig
 
 
-def graph(df, figure_size):
+def graph(df, multiplexes, figure_size):
     """4.	Produce a suitable graph that display the following information from the
 three DAB multiplexes that you extracted earlier: C18A, C18F, C188:
 Site, Freq, Block, Serv Label1, Serv Label2, Serv Label3, Serv label4, Serv Label10 
 You may need to consider how you group this data to make visualisation feasible.
 """
-    print('hold')
-    
-    #return fig
+    # Group data by multiplex and get counts for each multiplex
+    C18A_counts = df.groupby('C18A').size()
+    C18F_counts = df.groupby('C18F').size()
+    C188_counts = df.groupby('C188').size()
+
+    # Plot the grouped bar chart
+    fig, ax = plt.subplots()
+    multiplex_counts.plot(kind='bar', ax=ax)
+    ax.set_xlabel('Multiplex')
+    ax.set_ylabel('Count')
+    ax.set_title('DAB Multiplex Distribution')
+    plt.xticks(rotation=0)  # Rotate x-axis labels if needed
+
+    # Return the figure and axis objects
+    return fig, ax
 
 
-def corr_graph(df, figure_size):
+def corr_graph(df, multiplexes, figure_size):
     """5.	Determine if there is any significant correlation between the
 Freq, Block, Serv Label1, Serv Label2, Serv Label3, Serv label4,Serv Label10 
 used by the extracted DAB stations.  
@@ -92,22 +103,27 @@ def handler(vis_input):
     df = mongodb_interaction.retrieve_from_mongo()
     # Get standard figure size
     figure_size = (10, 5)
+    # Get the requested DAB Multiplexes
+    multiplexes = []
+    for mp in ['C18A', 'C18F', 'C188']:
+        if vis_input[mp]:
+            multiplexes.append(mp)
     # Determine the correct visualisation
     if vis_input['visualisation'] == "Summary Statistics":
         # Subset the dataframe, take only required columns
-        df = df[['C18A', 'C18F', 'C188', 'Date', 'Site Height', 'Power(kW)']]
-        visualisation = summary_stats(df, figure_size)
+        df = df[[*multiplexes, 'Date', 'Site Height', 'Power(kW)']]
+        visualisation = summary_stats(df, multiplexes, figure_size)
     elif vis_input['visualisation'] == "Bar Graphs":
         # Subset the dataframe, take only required columns
-        df = df[['C18A', 'C18F', 'C188', *vis_input['columns']]]
-        visualisation = graph(df, figure_size)
+        df = df[[*multiplexes, *vis_input['columns']]]
+        visualisation = graph(df, multiplexes, figure_size)
     elif vis_input['visualisation'] == "Correlation":
         # Do not accept Site as a variable for this graph
         if 'Site' in vis_input['columns']:
             vis_input['columns'].remove('Site')
         # Subset the dataframe, take only required columns
-        df = df[['C18A', 'C18F', 'C188', *vis_input['columns']]]
-        visualisation = corr_graph(df, figure_size)
+        df = df[[*multiplexes, *vis_input['columns']]]
+        visualisation = corr_graph(df, multiplexes, figure_size)
     # Case where an unexpected visualisation has been requested
     else:
         return None
