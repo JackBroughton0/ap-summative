@@ -169,7 +169,7 @@ class MyApplication:
             return None, None
         if 'antenna' not in antenna_path.lower():
             # Give feedback to the user requesting correct file
-            messagebox.showinfo("Incorrect input file", 
+            messagebox.showerror("Incorrect input file", 
                                 "Please select the Antenna csv file.")
             return None, None
         # Request the params data set
@@ -182,7 +182,7 @@ class MyApplication:
             return None, None
         if 'params' not in params_path.lower():
             # Give feedback to the user requesting correct file
-            messagebox.showinfo("Incorrect input file",
+            messagebox.showerror("Incorrect input file",
                                 "Please select the Params csv file.")
             return None, None
         return antenna_path, params_path
@@ -245,7 +245,7 @@ class MyApplication:
         # Create the visualisation in the visualisations module
         vis = visualisations.handler(vis_input)
         if not vis:
-            messagebox.showinfo("Unexpected visualisation request",
+            messagebox.showerror("Unexpected visualisation request",
                                  "Please select a valid visualisation.")
 
 
