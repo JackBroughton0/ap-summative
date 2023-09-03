@@ -113,10 +113,8 @@ def graph(df, multiplexes, figure_size):
 
 
 def corr_graph(df, multiplexes, figure_size):
-    """5.	Determine if there is any significant correlation between the
-Freq, Block, Serv Label1, Serv Label2, Serv Label3, Serv label4,Serv Label10 
-used by the extracted DAB stations.  
-You will need to select an appropriate visualisation to demonstrate this."""
+    """Produce plot to determine if there is any significant correlation
+    between the requested variables for the requested DAB Multiplexes"""
     # Create single DAB Multiplex column to facilitate groupby
     df = get_mp_column(df.copy(), multiplexes)
     # Function to calculate Cramér's V
