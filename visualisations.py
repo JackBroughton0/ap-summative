@@ -97,12 +97,12 @@ def graph(df, multiplexes, figure_size):
     """Produce plot showing counts of requested variables'
     values for the requested DAB Multiplexes"""
     # Create single DAB Multiplex column to facilitate groupby
-    df = get_mp_column(df, multiplexes)
-    # Group data by multiplex and get counts for each multiplex
-    multiplex_counts = df.groupby('DAB_Multiplex').size()
+    df = get_mp_column(df.copy(), multiplexes)
+    # Group data by multiplex
+    multiplex_counts = df.groupby('DAB_Multiplex')
 
     # Plot the grouped bar chart
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=figure_size)
     multiplex_counts.plot(kind='bar', ax=ax)
     ax.set_xlabel('Multiplex')
     ax.set_ylabel('Count')
@@ -118,7 +118,7 @@ Freq, Block, Serv Label1, Serv Label2, Serv Label3, Serv label4,Serv Label10
 used by the extracted DAB stations.  
 You will need to select an appropriate visualisation to demonstrate this."""
     # Create single DAB Multiplex column to facilitate groupby
-    df = get_mp_column(df, multiplexes)
+    df = get_mp_column(df.copy(), multiplexes)
     print('hold')
     #return fig
 

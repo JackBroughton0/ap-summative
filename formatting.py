@@ -91,7 +91,6 @@ def type_cast(df):
     df['In-Use Ae Ht'] = df['In-Use Ae Ht'].astype(int)
     # Convert to float columns
     df['In-Use ERP Total'] = df['In-Use ERP Total'].astype(float)
-    df['Freq'] = df['Freq'].astype(float)
     return df
 
 
