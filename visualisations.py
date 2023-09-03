@@ -5,35 +5,40 @@ import seaborn as sns
 import mongodb_interaction
 
 
-def generate_summary_stats(df):
+def produce_stats(df_mp):
     """Calculate the mean, median, and mode of Power(kW)
-    for the C18A, C18F, C188 DAB multiplexes"""
-    # Type cast relevant columns to allow descriptive statistics calculations
-    df['Site Height'] = df['Site Height'].astype(int)
-    df['Power(kW)'] = df['Power(kW)'].str.replace(',', '').astype(float)
+    for the specified DAB multiplex"""
+    summary_stats = {}
+    # Initialise 'Site Height' as an empty dictionary
+    summary_stats['Site Height'] = {}
+    # Initialise 'Date' as an empty dictionary
+    summary_stats['Date'] = {}
+    # Instantiate dataframe masks as requested by the client
+    site_height_mask = (df_mp['Site Height'] > 75)
+    date_mask = (df_mp['Date'].dt.year >= 2001)
 
+    # Get mean, median, and mode where site height is greater than 75
+    summary_stats['Site Height']['mean'] = df_mp.loc[site_height_mask]['Power(kW)'].mean()
+    summary_stats['Site Height']['median'] = df_mp.loc[site_height_mask]['Power(kW)'].median()
+    summary_stats['Site Height']['mode'] = df_mp.loc[site_height_mask]['Power(kW)'].mode()[0]
+
+    # Get mean, median, and mode where the year is greater than or equal to 2001
+    summary_stats['Date']['mean'] = df_mp.loc[date_mask]['Power(kW)'].mean()
+    summary_stats['Date']['median'] = df_mp.loc[date_mask]['Power(kW)'].median()
+    summary_stats['Date']['mode'] = df_mp.loc[date_mask]['Power(kW)'].mode()[0]
+    return summary_stats
+
+def generate_summary_stats(df):
+    """Produce plot showing the mean, median, and mode of
+    Power(kW) for the C18A, C18F, C188 DAB multiplexes where
+    the year is more than 2001 and site height is greater than 75m"""
+    # Create empty dict to store stats for all specified DAB multiplexes
+    multiplex_stats = {}
     for multiplex in ['C18A', 'C18F', 'C188']:
-        site_height_mask = (df[multiplex]==multiplex) & (df['Site Height'] > 75)
-        date_mask = (df[multiplex]==multiplex) & (df['Date'].dt.year >= 2001)
+        df_mp = df[df[multiplex]==multiplex].copy()
+        multiplex_stats[multiplex] = produce_stats(df_mp)
 
-        # Get mean, median, and mode where site height is greater than 75
-        site_ht_power_mean = df.loc[site_height_mask]['Power(kW)'].mean()
-        site_ht_power_median = df.loc[site_height_mask]['Power(kW)'].median()
-        site_ht_power_mode = df.loc[site_height_mask]['Power(kW)'].mode()[0]
-
-        # Get mean, median, and mode where the year is greater than or equal to 2001
-        date_power_mean = df.loc[date_mask]['Power(kW)'].mean()
-        date_power_median = df.loc[date_mask]['Power(kW)'].median()
-        date_power_mode = df.loc[date_mask]['Power(kW)'].mode()[0]
-
-        # Display the results
-        print(f"Mean Power(kW) where site height is greater than 75: {site_ht_power_mean}")
-        print(f"Median Power(kW) where site height is greater than 75: {site_ht_power_median}")
-        print(f"Mode Power(kW) where site height is greater than 75: {site_ht_power_mode}")
-        print(f"Mean Power(kW) where the year is greater than or equal to 2001: {date_power_mean}")
-        print(f"Median Power(kW) where the year is greater than or equal to 2001: {date_power_median}")
-        print(f"Mode Power(kW) where the year is greater than or equal to 2001: {date_power_mode}")
-    return df
+    # return visualisation
 
 
 def generate_graph(df):
@@ -49,6 +54,7 @@ def generate_corr_graph(df):
 Freq, Block, Serv Label1, Serv Label2, Serv Label3, Serv label4,Serv Label10 
 used by the extracted DAB stations.  
 You will need to select an appropriate visualisation to demonstrate this."""
+
 
 def handler(vis_input):
     # Get the data from MongoDB
