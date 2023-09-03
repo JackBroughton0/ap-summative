@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -32,13 +33,38 @@ def generate_summary_stats(df):
     """Produce plot showing the mean, median, and mode of
     Power(kW) for the C18A, C18F, C188 DAB multiplexes where
     the year is more than 2001 and site height is greater than 75m"""
+    multiplexes = ['C18A', 'C18F', 'C188']
     # Create empty dict to store stats for all specified DAB multiplexes
     multiplex_stats = {}
-    for multiplex in ['C18A', 'C18F', 'C188']:
+    for multiplex in multiplexes:
         df_mp = df[df[multiplex]==multiplex].copy()
         multiplex_stats[multiplex] = produce_stats(df_mp)
+    categories = ['mean', 'median', 'mode']
+    data = {category: [multiplex_stats[m]['Site Height'][category] for m in multiplexes] for category in categories}
 
-    # return visualisation
+    # Create a figure with two subplots
+    fig, axes = plt.subplots(1, 2, figsize=(6, 4))
+    for idx, variable in enumerate(['Date', 'Site Height']):
+        data = {category: [multiplex_stats[m][variable][category] for m in multiplexes] for category in categories}
+        ax = axes[idx]
+
+        # Create a bar plot for each variable
+        bar_width = 0.2
+        x = np.arange(len(multiplexes))
+        colors = ['b', 'g', 'r']
+        for i, category in enumerate(categories):
+            ax.bar(x + i * bar_width, data[category], bar_width, label=category, color=colors[i])
+
+        ax.set_xlabel('DAB Multiplexes')
+        ax.set_ylabel('Power(kW)')
+        ax.set_title(f"Summary Statistics for {variable} Power")
+        ax.set_xticks(x + bar_width)
+        ax.set_xticklabels(multiplexes)
+        ax.legend()
+
+    plt.tight_layout()  # Ensure subplots don't overlap
+
+    return fig
 
 
 def generate_graph(df):

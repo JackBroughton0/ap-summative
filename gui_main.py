@@ -14,7 +14,7 @@ class MyApplication:
     def __init__(self, root):
         self.root = root
         self.root.title("Data Visualisation App")
-        self.root.geometry("950x600")
+        self.root.geometry("1200x800")
         self.configure_style()
         self.selected_visualisation = tk.StringVar()
         self.c18a_var = tk.BooleanVar()
@@ -55,18 +55,10 @@ class MyApplication:
 
     def create_message_label(self):
         """Create a label to display a message initially"""
-        self.message_label = tk.Label(self.canvas_widget,
+        self.message_label = tk.Label(self.root,
                                       text="No visualisation available yet",
                                       font=("Helvetica", 12))
-        self.message_label.pack(fill=tk.BOTH, expand=True)
-
-    def create_visualisation_canvas(self):
-        """Create a canvas to display visualisations
-        on the main window"""
-        self.canvas = FigureCanvasTkAgg(plt.figure(figsize=(6, 4)),
-                                        master=self.root)
-        self.canvas_widget = self.canvas.get_tk_widget()
-        self.canvas_widget.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        self.message_label.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
     def create_dab_checkbuttons(self):
         """Provide checkbuttons to determine which
@@ -145,8 +137,6 @@ class MyApplication:
         self.create_description()
         # Create buttons to allow file uploads
         self.create_upload_buttons()
-        # Canvas for Matplotlib plots
-        self.create_visualisation_canvas()
         # Display a message before the first visualisation is created
         self.create_message_label()
         # Data Visualisations Section
@@ -248,24 +238,13 @@ class MyApplication:
             messagebox.showerror("Unexpected visualisation request",
                                  "Please select a valid visualisation.")
 
-
-        # Sample data for demonstration
-        x = [1, 2, 3, 4, 5]
-        y = [5, 4, 3, 2, 1]
-
-        # Clear the previous plot (if any)
-        plt.clf()
-
-        # Create a simple line plot
-        plt.plot(x, y, marker='o', linestyle='-')
-        plt.title("Sample Line Plot")
-        plt.xlabel("X-axis")
-        plt.ylabel("Y-axis")
-
-        # Hide the message label and display the visualisation
+        # Hide the initial 'No visualisation available yet' message
         self.message_label.pack_forget()
-        self.canvas_widget.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
-        self.canvas.draw()
+        # Display the visualisation
+        self.canvas = FigureCanvasTkAgg(vis,
+                                        master=self.root)
+        self.canvas_widget = self.canvas.get_tk_widget()
+        self.canvas_widget.pack(side=tk.RIGHT, fill=tk.X, expand=True)
 
 
 if __name__ == '__main__':
