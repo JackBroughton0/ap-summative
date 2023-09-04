@@ -93,7 +93,7 @@ def clean_data(df):
     df['In-Use ERP Total'] = df['In-Use ERP Total'].str.replace(',', '')
     for col in df.columns:
         # Remove extra whitespace from values
-        df[col] = df[col].str.replace(r'\s+', ' ').str.strip()
+        df[col] = df[col].str.replace(r'\s+', ' ', regex=True).str.strip()
         # Convert all values to upper case
         df[col] = df[col].str.upper()
     # Remove spaces from NGR values
