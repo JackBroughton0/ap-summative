@@ -37,7 +37,7 @@ class RadioDataVisualisation:
                        " your data visualisations.")
         description_label = tk.Label(self.root, text=description,
                                      font=("Helvetica", 14), bg='white')
-        description_label.grid(row=0, column=0, columnspan=5, pady=(0, 10))
+        description_label.grid(row=0, column=0, columnspan=5, pady=(0,2))
 
     def create_upload_buttons(self):
         """Create buttons to allow the user to upload their
@@ -46,20 +46,13 @@ class RadioDataVisualisation:
         clean_raw_button = ttk.Button(self.root, text="Clean and Upload",
                                       padding=(10, 5), width=20,
                                       command=self.clean_file)
-        clean_raw_button.grid(row=1, column=0, columnspan=8, pady=(5,0), padx=0)
+        clean_raw_button.grid(row=1, column=1, padx=(0, 5))
 
         # Upload JSON Button
         upload_json_button = ttk.Button(self.root, text="Upload JSON",
                                         padding=(10, 5), width=20,
                                         command=self.save_json_file)
-        upload_json_button.grid(row=1, column=1, columnspan=9, pady=(5,0), padx=0)
-
-    def create_message_label(self):
-        """Create a label to display a message initially"""
-        self.message_label = tk.Label(self.visualisation_frame,
-                                      text="No visualisation available yet",
-                                      font=("Helvetica", 12))
-        self.message_label.grid(row=0, rowspan=10, column=0, columnspan=10, padx=50, pady=50)
+        upload_json_button.grid(row=1, column=2)
 
     def create_dab_checkbuttons(self):
         """Provide checkbuttons to determine which
@@ -113,6 +106,13 @@ class RadioDataVisualisation:
         for variable in variables:
             self.variables_listbox.insert(tk.END, variable)
 
+    def create_message_label(self):
+        """Create a label to display a message initially"""
+        self.message_label = tk.Label(self.visualisation_frame,
+                                      text="No visualisation available yet",
+                                      font=("Helvetica", 12))
+        self.message_label.grid(row=0, rowspan=10, column=0, columnspan=10, padx=50, pady=50)
+
     def format_visual_frame(self):
         """Organise the Data Visualisation Frame by
         creating and positioning the necessary widgets"""
@@ -122,6 +122,8 @@ class RadioDataVisualisation:
         self.create_vis_combobox()
         # Provide variables options
         self.create_vars_listbox()
+        # Display a message before the first visualisation is created
+        self.create_message_label()
 
     def create_generate_button(self):
         """Create a button to allow visualisations
@@ -144,8 +146,6 @@ class RadioDataVisualisation:
         self.visualisation_frame.grid(row=3, column=0, columnspan=10, sticky="nsew")
         self.root.grid_rowconfigure(3, weight=1)
         self.root.grid_columnconfigure(0, weight=1)
-        # Display a message before the first visualisation is created
-        self.create_message_label()
         # Organise the Data Visualisation frame
         self.format_visual_frame()
         # Create generate button to display visualisations
