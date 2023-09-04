@@ -37,7 +37,7 @@ class RadioDataVisualisation:
                        " your data visualisations.")
         description_label = tk.Label(self.root, text=description,
                                      font=("Helvetica", 16), bg='white')
-        description_label.grid(row=0, column=0, columnspan=5, pady=(0,2))
+        description_label.grid(row=0, column=0, columnspan=3, pady=(0,2))
 
     def create_upload_buttons(self):
         """Create buttons to allow the user to upload their
@@ -111,7 +111,7 @@ class RadioDataVisualisation:
         self.message_label = tk.Label(self.visualisation_frame,
                                       text="No visualisation available yet",
                                       font=("Helvetica", 14))
-        self.message_label.grid(row=0, rowspan=10, column=4, columnspan=10, padx=50, pady=50)
+        self.message_label.grid(row=0, rowspan=10, column=4, columnspan=20, padx=50, pady=50)
 
     def format_visual_frame(self):
         """Organise the Data Visualisation Frame by
@@ -143,7 +143,7 @@ class RadioDataVisualisation:
         self.create_upload_buttons()
         # Data Visualisations Section
         self.visualisation_frame = ttk.Frame(self.root)
-        self.visualisation_frame.grid(row=3, column=0, columnspan=10, sticky="nsew")
+        self.visualisation_frame.grid(row=3, column=0, columnspan=12, sticky="nsew")
         self.root.grid_rowconfigure(3, weight=1)
         self.root.grid_columnconfigure(0, weight=1)
         # Organise the Data Visualisation frame
