@@ -106,12 +106,21 @@ class RadioDataVisualisation:
         for variable in variables:
             self.variables_listbox.insert(tk.END, variable)
 
+    def create_generate_button(self):
+        """Create a button to allow visualisations
+        to be displayed"""
+        generate_button = ttk.Button(self.visualisation_frame,
+                                    text="Generate", padding=(10, 5),
+                                    command=self.generate_visualisation,
+                                    width=12)
+        generate_button.grid(row=5, column=0)
+
     def create_message_label(self):
         """Create a label to display a message initially"""
         self.message_label = tk.Label(self.visualisation_frame,
                                       text="No visualisation available yet",
                                       font=("Helvetica", 14))
-        self.message_label.grid(row=0, rowspan=10, column=4,
+        self.message_label.grid(row=0, rowspan=5, column=4,
                                 padx=(50, 10), pady=50)
 
     def format_visual_frame(self):
@@ -123,17 +132,10 @@ class RadioDataVisualisation:
         self.create_vis_combobox()
         # Provide variables options
         self.create_vars_listbox()
+        # Create generate button to display visualisations
+        self.create_generate_button()
         # Display a message before the first visualisation is created
         self.create_message_label()
-
-    def create_generate_button(self):
-        """Create a button to allow visualisations
-        to be displayed"""
-        generate_button = ttk.Button(self.visualisation_frame,
-                                    text="Generate", padding=(10, 5),
-                                    command=self.generate_visualisation,
-                                    width=12)
-        generate_button.grid(row=5, column=0)
 
     def create_widgets(self):
         """Create widgets for the user interface and
@@ -149,8 +151,6 @@ class RadioDataVisualisation:
         self.root.grid_columnconfigure(0, weight=1)
         # Organise the Data Visualisation frame
         self.format_visual_frame()
-        # Create generate button to display visualisations
-        self.create_generate_button()
 
     def get_csv_files(self):
         """Read the user input CSV files"""
