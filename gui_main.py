@@ -6,6 +6,7 @@ from tkinter import messagebox
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import pandas as pd
+import json
 
 import formatting
 import mongodb_interaction
@@ -206,7 +207,16 @@ class MyApplication:
         # Retrieve the json file path
         json_input_file = self.get_json_file()
         if json_input_file:
-            df = pd.read_json(json_input_file)
+            # Load the JSON data
+            with open(json_input_file, 'r') as file:
+                data = json.load(file)
+            # Flatten the nested keys
+            df = pd.json_normalize(data)
+            # Remove prefixes where the data was stored in a nested dictionary
+            df.columns = [mongodb_interaction.clean_column_name(col) for col in df.columns]
+            df.rename({'_id': 'id'}, axis=1, inplace=True)
+            # Ensure date is datetime
+            df = formatting.format_dates(df)
             # Get subset of data required for visualisations
             upload_data = formatting.format_json(df)
             # Upload the data to the formatted_data collection
@@ -243,8 +253,8 @@ class MyApplication:
         # Create the visualisation in the visualisations module
         vis = visualisations.handler(vis_input)
         if not vis:
-            messagebox.showerror("Unexpected visualisation request",
-                                 "Please select a valid visualisation.")
+            messagebox.showerror("Insufficient data",
+                                 "Please ensure there is enough data")
             return
         # Destroy the initial 'No visualisation available yet' message
         self.message_label.destroy()

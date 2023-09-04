@@ -73,10 +73,14 @@ def format_dates(df):
         df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
     except ValueError:
         try:
-            # Allow dashes
-            df['Date'] = pd.to_datetime(df['Date'], format='%d-%m-%Y')
-        except ValueError as e:
-            print(f'Unsupported date format: {e}')
+            # Allow ISO 8601 date and time format
+            df['Date'] = pd.to_datetime(df['Date'], format='%Y-%m-%d %H:%M:%S')
+        except ValueError:
+            try:
+                # Allow dashes
+                df['Date'] = pd.to_datetime(df['Date'], format='%d-%m-%Y')
+            except ValueError as e:
+                print(f'Unsupported date format: {e}')
     return df
 
 

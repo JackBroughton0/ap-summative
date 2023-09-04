@@ -191,6 +191,9 @@ def handler(vis_input):
     # Get standard figure size
     figure_size = (10, 5)
     df, multiplexes = format_dataframe(df, vis_input)
+    # Do not attempt to generate visualisations where no data is present
+    if df.empty:
+        return None
     # Determine the correct visualisation
     if vis_input['visualisation'] == "Summary Statistics":
         # Subset the dataframe, take only required columns
@@ -207,6 +210,6 @@ def handler(vis_input):
         visualisation = corr_graph(df, multiplexes, figure_size)
     # Case where an unexpected visualisation has been requested
     else:
-        return None
+        raise KeyError("Unexpected visualisaition requested")
     return visualisation
 
