@@ -3,8 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-import mongodb_interaction
-
 
 def format_dataframe(df, vis_input):
     """Format the dataframe so that only the data records
@@ -185,9 +183,7 @@ def corr_graph(df, multiplexes, figure_size):
     return fig
 
 
-def handler(vis_input):
-    # Get the data from MongoDB
-    df = mongodb_interaction.retrieve_from_mongo()
+def handler(df, vis_input):
     # Get standard figure size
     figure_size = (10, 5)
     df, multiplexes = format_dataframe(df, vis_input)

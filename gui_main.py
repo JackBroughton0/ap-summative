@@ -267,8 +267,10 @@ class RadioDataVisualisation:
                      "C188": self.c188_var.get(),
                      "visualisation": self.selected_visualisation.get(),
                      "columns": selected_vars}
+        # Get the data from MongoDB
+        df = mongodb_interaction.retrieve_from_mongo()
         # Create the visualisation in the visualisations module
-        vis = visualisations.handler(vis_input)
+        vis = visualisations.handler(df,vis_input)
         if not vis:
             messagebox.showerror("Insufficient data",
                                  "Please ensure there is enough data")
