@@ -113,7 +113,7 @@ class RadioDataVisualisation:
                                     text="Generate", padding=(10, 5),
                                     command=self.generate_visualisation,
                                     width=12)
-        generate_button.grid(row=5, column=0)
+        generate_button.grid(row=5, column=0, pady=50)
 
     def create_message_label(self):
         """Create a label to display a message initially"""
