@@ -120,7 +120,7 @@ class RadioDataVisualisation:
         self.message_label = tk.Label(self.visualisation_frame,
                                       text="No visualisation available yet",
                                       font=("Helvetica", 14))
-        self.message_label.grid(row=0, rowspan=5, column=4,
+        self.message_label.grid(row=0, rowspan=6, column=4,
                                 padx=(50, 10), pady=50)
 
     def format_visual_frame(self):
@@ -271,7 +271,7 @@ class RadioDataVisualisation:
         # Get the data from MongoDB
         df = mongodb_interaction.retrieve_from_mongo()
         # Create the visualisation in the visualisations module
-        vis = visualisations.handler(df,vis_input)
+        vis = visualisations.handler(df, vis_input)
         if not vis:
             messagebox.showerror("Insufficient data",
                                  "Please ensure there is enough data")
