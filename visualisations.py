@@ -184,6 +184,8 @@ def corr_graph(df, multiplexes, figure_size):
 
 
 def handler(df, vis_input):
+    """Applies user input parameters to the dataframe
+    and returns a figure of the selected visualisation"""
     # Get standard figure size
     figure_size = (10, 5)
     df, multiplexes = format_dataframe(df, vis_input)
