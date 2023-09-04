@@ -111,7 +111,7 @@ class RadioDataVisualisation:
         self.message_label = tk.Label(self.visualisation_frame,
                                       text="No visualisation available yet",
                                       font=("Helvetica", 14))
-        self.message_label.grid(row=0, rowspan=10, column=4, columnspan=6,
+        self.message_label.grid(row=0, rowspan=10, column=4,
                                 padx=(50, 10), pady=50)
 
     def format_visual_frame(self):
