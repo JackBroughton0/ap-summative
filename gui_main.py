@@ -11,7 +11,7 @@ import formatting
 import mongodb_interaction
 import visualisations
 
-class MyApplication:
+class RadioDataVisualisation:
     def __init__(self, root):
         self.root = root
         self.root.title("Data Visualisation App")
@@ -37,7 +37,7 @@ class MyApplication:
                        " your data visualisations.")
         description_label = tk.Label(self.root, text=description,
                                      font=("Helvetica", 14), bg='white')
-        description_label.pack(anchor='n')
+        description_label.grid(row=0, column=0, columnspan=5, pady=(0, 10))
 
     def create_upload_buttons(self):
         """Create buttons to allow the user to upload their
@@ -46,20 +46,20 @@ class MyApplication:
         clean_raw_button = ttk.Button(self.root, text="Clean and Upload",
                                       padding=(10, 5), width=20,
                                       command=self.clean_file)
-        clean_raw_button.pack(anchor='nw')
+        clean_raw_button.grid(row=1, column=0, columnspan=8, pady=(5,0), padx=0)
 
         # Upload JSON Button
         upload_json_button = ttk.Button(self.root, text="Upload JSON",
                                         padding=(10, 5), width=20,
                                         command=self.save_json_file)
-        upload_json_button.pack(anchor='nw')
+        upload_json_button.grid(row=1, column=1, columnspan=9, pady=(5,0), padx=0)
 
     def create_message_label(self):
         """Create a label to display a message initially"""
-        self.message_label = tk.Label(self.root,
+        self.message_label = tk.Label(self.visualisation_frame,
                                       text="No visualisation available yet",
                                       font=("Helvetica", 12))
-        self.message_label.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        self.message_label.grid(row=0, rowspan=10, column=0, columnspan=10, padx=50, pady=50)
 
     def create_dab_checkbuttons(self):
         """Provide checkbuttons to determine which
@@ -139,11 +139,13 @@ class MyApplication:
         self.create_description()
         # Create buttons to allow file uploads
         self.create_upload_buttons()
-        # Display a message before the first visualisation is created
-        self.create_message_label()
         # Data Visualisations Section
         self.visualisation_frame = ttk.Frame(self.root)
-        self.visualisation_frame.pack(fill=tk.BOTH, expand=True)
+        self.visualisation_frame.grid(row=3, column=0, columnspan=10, sticky="nsew")
+        self.root.grid_rowconfigure(3, weight=1)
+        self.root.grid_columnconfigure(0, weight=1)
+        # Display a message before the first visualisation is created
+        self.create_message_label()
         # Organise the Data Visualisation frame
         self.format_visual_frame()
         # Create generate button to display visualisations
@@ -284,6 +286,6 @@ class MyApplication:
 
 if __name__ == '__main__':
     root = tk.Tk()
-    app = MyApplication(root)
+    app = RadioDataVisualisation(root)
     root.mainloop()
 
