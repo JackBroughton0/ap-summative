@@ -14,8 +14,10 @@ import visualisations
 class RadioDataVisualisation:
     def __init__(self, root):
         self.root = root
-        self.root.title("Data Visualisation App")
+        self.root.title("Radio Data Visualisation")
         self.root.geometry("1400x800")
+        # Configure the background colour
+        self.root.configure(bg="light blue")
         self.configure_style()
         self.selected_visualisation = tk.StringVar()
         self.c18a_var = tk.BooleanVar()
@@ -25,7 +27,14 @@ class RadioDataVisualisation:
 
     def configure_style(self):
         # Configure the background color to light blue
-        self.root.configure(bg="light blue")
+        self.frame_style = ttk.Style()
+        self.frame_style.configure("Custom.TFrame",
+                                    background="light blue",
+                                    borderwidth=2,
+                                    relief="solid")
+        self.button_style = ttk.Style()
+        self.button_style.configure("Custom.TCheckbutton",
+                       background="light blue")
 
     def create_description(self):
         """Write and format the description for
@@ -46,29 +55,30 @@ class RadioDataVisualisation:
         clean_raw_button = ttk.Button(self.root, text="Clean and Upload",
                                       padding=(10, 5), width=20,
                                       command=self.clean_file)
-        clean_raw_button.grid(row=1, column=1, padx=(0, 5))
+        clean_raw_button.grid(row=1, column=1, padx=(0, 5), pady=(0, 2))
 
         # Upload JSON Button
         upload_json_button = ttk.Button(self.root, text="Upload JSON",
                                         padding=(10, 5), width=20,
                                         command=self.save_json_file)
-        upload_json_button.grid(row=1, column=2)
+        upload_json_button.grid(row=1, column=2, pady=(0,2))
 
     def create_dab_checkbuttons(self):
         """Provide checkbuttons to determine which
         DAB multiplexes to generate visualisations for"""
         # DAB multiplex selection
         dab_multiplex = tk.Label(self.visualisation_frame,
+                                 background="light blue",
                                  text="Select DAB Multiplex:")
         dab_multiplex.grid(row=0, column=0, padx=10, sticky="w")
         # Check buttons for 'C18A', 'C18F', 'C188'
-        c18a_checkbox = ttk.Checkbutton(self.visualisation_frame,
+        c18a_checkbox = ttk.Checkbutton(self.visualisation_frame, style="Custom.TCheckbutton",
                                         text="C18A", variable=self.c18a_var)
         c18a_checkbox.grid(row=0, column=1, padx=5, pady=2, sticky="w")
-        c18f_checkbox = ttk.Checkbutton(self.visualisation_frame,
+        c18f_checkbox = ttk.Checkbutton(self.visualisation_frame, style="Custom.TCheckbutton",
                                         text="C18F", variable=self.c18f_var)
         c18f_checkbox.grid(row=0, column=2, padx=5, pady=2, sticky="w")
-        c188_checkbox = ttk.Checkbutton(self.visualisation_frame,
+        c188_checkbox = ttk.Checkbutton(self.visualisation_frame, style="Custom.TCheckbutton",
                                         text="C188", variable=self.c188_var)
         c188_checkbox.grid(row=0, column=3, padx=5, pady=2, sticky="w")
 
@@ -76,6 +86,7 @@ class RadioDataVisualisation:
         """Create a combobox where the dropdown
         provides a list of the available visualisations"""
         visualisation_label = tk.Label(self.visualisation_frame,
+                                       background="light blue",
                                        text="Select Visualisation:")
         visualisation_label.grid(row=1, column=0, padx=10,
                                  pady=(10,2), sticky="w")
@@ -94,6 +105,7 @@ class RadioDataVisualisation:
         """Create a listbox containing the variables
         that can be included in the visualisations"""
         variables_label = tk.Label(self.visualisation_frame,
+                                   background="light blue",
                                    text="Select Correlation Variables:")
         variables_label.grid(row=3, column=0, padx=10, pady=(5,1), sticky="w")
 
@@ -118,6 +130,7 @@ class RadioDataVisualisation:
     def create_message_label(self):
         """Create a label to display a message initially"""
         self.message_label = tk.Label(self.visualisation_frame,
+                                      background="light blue",
                                       text="No visualisation available yet",
                                       font=("Helvetica", 14))
         self.message_label.grid(row=0, rowspan=6, column=4,
@@ -145,8 +158,9 @@ class RadioDataVisualisation:
         # Create buttons to allow file uploads
         self.create_upload_buttons()
         # Data Visualisations Section
-        self.visualisation_frame = ttk.Frame(self.root)
-        self.visualisation_frame.grid(row=3, column=0, columnspan=3, sticky="nsew")
+        self.visualisation_frame = ttk.Frame(self.root, style="Custom.TFrame")
+        self.visualisation_frame.grid(row=3, column=0, columnspan=3,
+                                      pady=(2,0), sticky="nsew")
         self.root.grid_rowconfigure(3, weight=1)
         self.root.grid_columnconfigure(0, weight=1)
         # Organise the Data Visualisation frame
@@ -284,7 +298,7 @@ class RadioDataVisualisation:
         self.canvas_widget = self.canvas.get_tk_widget()
         # Configure grid options for self.canvas_widget
         self.canvas_widget.grid(column=4, row=0, rowspan=6,
-                                padx=(5,0), pady=0, sticky='nsew')
+                                padx=5, pady=(25,0), sticky='nsew')
 
 
 if __name__ == '__main__':
