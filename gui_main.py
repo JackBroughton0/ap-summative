@@ -36,7 +36,7 @@ class RadioDataVisualisation:
                        " to be processed.\nThen generate"
                        " your data visualisations.")
         description_label = tk.Label(self.root, text=description,
-                                     font=("Helvetica", 14), bg='white')
+                                     font=("Helvetica", 16), bg='white')
         description_label.grid(row=0, column=0, columnspan=5, pady=(0,2))
 
     def create_upload_buttons(self):
@@ -110,8 +110,8 @@ class RadioDataVisualisation:
         """Create a label to display a message initially"""
         self.message_label = tk.Label(self.visualisation_frame,
                                       text="No visualisation available yet",
-                                      font=("Helvetica", 12))
-        self.message_label.grid(row=0, rowspan=10, column=0, columnspan=10, padx=50, pady=50)
+                                      font=("Helvetica", 14))
+        self.message_label.grid(row=0, rowspan=10, column=4, columnspan=10, padx=50, pady=50)
 
     def format_visual_frame(self):
         """Organise the Data Visualisation Frame by
