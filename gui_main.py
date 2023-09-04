@@ -212,9 +212,24 @@ class MyApplication:
                 data = json.load(file)
             # Flatten the nested keys
             df = pd.json_normalize(data)
+            # Check columns are as expected
+            if list(df.columns) != ['_id', 'Date', 'C18A', 'C18F', 'C188',
+                                     'Aerial height(m)', 'Power(kW)',
+                                     'Freq', 'Block', 'Site Info.NGR',
+                                     'Site Info.Site', 'Site Info.Site Height',
+                                     'Service Labels.Serv Label1',
+                                     'Service Labels.Serv Label2',
+                                     'Service Labels.Serv Label3',
+                                     'Service Labels.Serv Label4', 
+                                     'Service Labels.Serv Label10']:
+                
+                messagebox.showerror("Incorrect data format", "Please ensure"
+                                       " JSON file is formatted as it is in the"
+                                       " 'formatted_data' MongoDB collection.")
+                return
+            df.rename({'_id': 'id'}, axis=1, inplace=True)
             # Remove prefixes where the data was stored in a nested dictionary
             df.columns = [mongodb_interaction.clean_column_name(col) for col in df.columns]
-            df.rename({'_id': 'id'}, axis=1, inplace=True)
             # Ensure date is datetime
             df = formatting.format_dates(df)
             # Get subset of data required for visualisations
