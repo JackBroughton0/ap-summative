@@ -144,7 +144,7 @@ class RadioDataVisualisation:
         self.create_upload_buttons()
         # Data Visualisations Section
         self.visualisation_frame = ttk.Frame(self.root)
-        self.visualisation_frame.grid(row=3, column=0, columnspan=12, sticky="nsew")
+        self.visualisation_frame.grid(row=3, column=0, columnspan=3, sticky="nsew")
         self.root.grid_rowconfigure(3, weight=1)
         self.root.grid_columnconfigure(0, weight=1)
         # Organise the Data Visualisation frame
