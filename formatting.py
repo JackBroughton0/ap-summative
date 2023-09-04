@@ -1,8 +1,5 @@
 import pandas as pd
 import numpy as np
-import csv
-import json
-import unicodedata
 
 
 def custom_decode(file_path):
@@ -12,16 +9,6 @@ def custom_decode(file_path):
     file_name_index = file_path.rfind('/') + 1
     # Slice the file_path string to extract the file name
     file_name = file_path[file_name_index:file_ext_index]
-    # with open(file_path, 'rb') as file:
-    #     original_data = file.readlines()
-    #     for line in original_data:
-    #         print(original_data.index(line))
-    #         try:
-    #             data = line.decode("utf-8")
-    #         except UnicodeDecodeError as e:
-    #             # Show positions of errors in relation to text
-    #             data = line[:e.start] + line[e.end:]
-    #             print(data)
     try:
         # First assume the csv is utf-8 encoded
         df = pd.read_csv(file_path, dtype='str')
@@ -51,14 +38,11 @@ def get_raw_data(antenna_path, params_path):
         print(f'Decoding error when reading Antenna dataset:\n{error}')
         df_antenna = pd.read_csv(antenna_path, usecols=antenna_cols,
                                  dtype='str', encoding='latin-1')
-        # df_antenna = custom_decode(antenna_path)
-    # Params contains an 'invalid continuation byte'
-    # 0xe0 is an invalid continuation byte since it starts with the bit pattern 111 rather than 10
+        df_antenna = custom_decode(antenna_path)
     try:
         df_params = pd.read_csv(params_path, dtype='str')
     except UnicodeDecodeError as error:
         print(f'Decoding error when reading Params dataset:\n{error}')
-        # df_params = pd.read_csv(params_path, dtype='str', encoding='latin-1')
         df_params = custom_decode(params_path)
 
     # Merge the antennas and params dataframes on id

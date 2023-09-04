@@ -3,7 +3,6 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
 from tkinter import messagebox
-import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import pandas as pd
 import json
@@ -208,6 +207,7 @@ class MyApplication:
         json_input_file = self.get_json_file()
         if json_input_file:
             # Load the JSON data
+            # Assume the clean file is in the MongoDB format
             with open(json_input_file, 'r') as file:
                 data = json.load(file)
             # Flatten the nested keys
