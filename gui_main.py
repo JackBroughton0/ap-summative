@@ -112,7 +112,7 @@ class RadioDataVisualisation:
                                       text="No visualisation available yet",
                                       font=("Helvetica", 14))
         self.message_label.grid(row=0, rowspan=10, column=4, columnspan=6,
-                                padx=(50, 20), pady=50)
+                                padx=(50, 10), pady=50)
 
     def format_visual_frame(self):
         """Organise the Data Visualisation Frame by
