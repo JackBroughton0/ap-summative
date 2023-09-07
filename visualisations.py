@@ -21,7 +21,7 @@ def format_dataframe(df, vis_input):
     return df, multiplexes
 
 
-def produce_stats(df_mp):
+def get_summary_stats(df_mp):
     """Calculate the mean, median, and mode of Power(kW)
     for the specified DAB multiplex"""
     summary_stats = {}
@@ -45,7 +45,7 @@ def produce_stats(df_mp):
     return summary_stats
 
 
-def summary_stats(df, multiplexes, figure_size):
+def summary_stats_vis(df, multiplexes, figure_size):
     """Produce plot showing the mean, median, and mode of
     Power(kW) for the C18A, C18F, C188 DAB multiplexes where
     the year is more than 2001 and site height is greater than 75m"""
@@ -53,7 +53,7 @@ def summary_stats(df, multiplexes, figure_size):
     multiplex_stats = {}
     for multiplex in multiplexes:
         df_mp = df[df[multiplex]==multiplex].copy()
-        multiplex_stats[multiplex] = produce_stats(df_mp)
+        multiplex_stats[multiplex] = get_summary_stats(df_mp)
 
     sum_stats = ['mean', 'median', 'mode']
 
@@ -200,7 +200,7 @@ def handler(df, vis_input):
     if vis_input['visualisation'] == "Summary Statistics":
         # Subset the dataframe, take only required columns
         df = df[[*multiplexes, 'Date', 'Site Height', 'Power(kW)']]
-        visualisation = summary_stats(df, multiplexes, figure_size)
+        visualisation = summary_stats_vis(df, multiplexes, figure_size)
     elif vis_input['visualisation'] == "Other Bar Graphs":
         # Subset the dataframe, take only required columns
         df = df[['Site', *multiplexes, 'Freq', 'Block', 'Serv Label1',
