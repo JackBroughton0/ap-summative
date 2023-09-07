@@ -54,25 +54,29 @@ def summary_stats(df, multiplexes, figure_size):
     for multiplex in multiplexes:
         df_mp = df[df[multiplex]==multiplex].copy()
         multiplex_stats[multiplex] = produce_stats(df_mp)
-    categories = ['mean', 'median', 'mode']
-    data = {category: [multiplex_stats[m]['Site Height'][category] for m in multiplexes] for category in categories}
+
+    sum_stats = ['mean', 'median', 'mode']
 
     # Create a figure with two subplots
     fig, axes = plt.subplots(1, 2, figsize=figure_size)
     for idx, variable in enumerate(['Date', 'Site Height']):
-        data = {category: [multiplex_stats[m][variable][category] for m in multiplexes] for category in categories}
+        data = {stat: [multiplex_stats[m][variable][stat] for m in multiplexes]
+                for stat in sum_stats}
         ax = axes[idx]
 
         # Create a bar plot for each variable
         bar_width = 0.2
         x = np.arange(len(multiplexes))
-        colors = ['b', 'g', 'r']
-        for i, category in enumerate(categories):
-            ax.bar(x + i * bar_width, data[category], bar_width, label=category, color=colors[i])
+        bar_colours = ['b', 'g', 'r']
+        for i, stat in enumerate(sum_stats):
+            ax.bar(x + i * bar_width, data[stat], bar_width,
+                   label=stat, color=bar_colours[i])
 
         ax.set_xlabel('DAB Multiplex')
         ax.set_ylabel('Power(kW)')
-        ax.set_title(f"DAB Multiplex Power where {variable} > {'the year 2000' if variable=='Date' else '75m'}")
+        # Determine the title depending on the current variable
+        ax.set_title(f"DAB Multiplex Power where {variable} > "
+                     f"{'the year 2000' if variable=='Date' else '75m'}")
         ax.set_xticks(x + bar_width)
         ax.set_xticklabels(multiplexes)
         ax.legend()
@@ -137,29 +141,29 @@ def other_bar_graphs(df, multiplexes, figure_size):
     return fig
 
 
+def cramers_v(x, y):
+    confusion_matrix = pd.crosstab(x, y)
+    chi2 = 0
+    n = confusion_matrix.values.sum()
+    rows, cols = confusion_matrix.shape
+
+    for i in range(rows):
+        for j in range(cols):
+            expected = (confusion_matrix.iloc[i].sum() * confusion_matrix.iloc[:, j].sum()) / n
+            chi2 += (confusion_matrix.iloc[i, j] - expected) ** 2 / expected
+
+    cramers_v = np.sqrt(chi2 / (n * (min(rows, cols) - 1)))
+    # Case where Cramer's V has detected no association
+    if np.isnan(cramers_v):
+        return 0.0
+    return cramers_v
+
+
 def corr_graph(df, multiplexes, figure_size):
     """Produce plot to determine if there is any significant correlation
     between the requested variables for the requested DAB Multiplexes"""
     # Create single DAB Multiplex column to facilitate groupby
     df = get_mp_column(df.copy(), multiplexes)
-    # Function to calculate Cramér's V
-    def cramers_v(x, y):
-        confusion_matrix = pd.crosstab(x, y)
-        chi2 = 0
-        n = confusion_matrix.values.sum()
-        rows, cols = confusion_matrix.shape
-
-        for i in range(rows):
-            for j in range(cols):
-                expected = (confusion_matrix.iloc[i].sum() * confusion_matrix.iloc[:, j].sum()) / n
-                chi2 += (confusion_matrix.iloc[i, j] - expected) ** 2 / expected
-
-        cramers_v = np.sqrt(chi2 / (n * (min(rows, cols) - 1)))
-        # Case where Cramer's V has detected no association
-        if np.isnan(cramers_v):
-            return 0.0
-        return cramers_v
-
     # Calculate Cramér's V matrix for all pairs of columns
     cramer_matrix = pd.DataFrame(index=df.columns, columns=df.columns)
 
