@@ -27,7 +27,7 @@ def custom_decode(file_path):
 
 def get_raw_data(antenna_path, params_path):
     """Get the raw data"""
-    # Instantiate list of required columns from antenna data
+    # Initialise list of required columns from antenna data
     antenna_cols = ['id', 'NGR', 'Site Height',
                     'In-Use Ae Ht', 'In-Use ERP Total']
     # Read in raw data sets, assume UTF-8 encoding
@@ -115,7 +115,7 @@ def wrangle_dab_multiplex(df):
     """Extract DAB multiplex blocks C18A, C18F and C188 into
       their own columns and drop records that don't have
       these EID values"""
-    # Instantiate list of required DAB multiplexes
+    # Initialise list of required DAB multiplexes
     dab_multiplexes = ['C18A', 'C18F', 'C188']
     # Create a column indicating the presence of each multiplex
     for multiplex in dab_multiplexes:
@@ -130,7 +130,7 @@ def get_output_columns(df):
     # Rename columns according to client brief
     df = df.rename({'In-Use Ae Ht': 'Aerial height(m)',
                     'In-Use ERP Total': 'Power(kW)'}, axis=1)
-    # Instantiate list of columns required for output
+    # Initialise list of columns required for output
     keep_cols = ['id', 'NGR', 'C18A', 'C18F', 'C188', 'Site', 'Site Height',
                  'Aerial height(m)', 'Power(kW)', 'Date', 'Freq',
                  'Block', 'Serv Label1', 'Serv Label2', 'Serv Label3',

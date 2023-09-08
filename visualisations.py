@@ -29,7 +29,7 @@ def get_summary_stats(df_mp):
     summary_stats['Site Height'] = {}
     # Initialise 'Date' as an empty dictionary
     summary_stats['Date'] = {}
-    # Instantiate dataframe masks as requested by the client
+    # Initialise dataframe masks as requested by the client
     site_height_mask = (df_mp['Site Height'] > 75)
     date_mask = (df_mp['Date'].dt.year >= 2001)
 
