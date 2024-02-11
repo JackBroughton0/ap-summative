@@ -71,14 +71,18 @@ def summary_stats_vis(df, multiplexes, figure_size):
         x = np.arange(len(multiplexes))
         bar_colours = ['b', 'g', 'r']
         for i, stat in enumerate(sum_stats):
-            ax.bar(x + i * bar_width, data[stat], bar_width,
-                   label=stat, color=bar_colours[i])
+            ax.bar(
+                x + i * bar_width, data[stat], bar_width,
+                label=stat, color=bar_colours[i]
+            )
 
         ax.set_xlabel('DAB Multiplex')
         ax.set_ylabel('Power(kW)')
         # Determine the title depending on the current variable
-        ax.set_title(f"DAB Multiplex Power where {variable} > "
-                     f"{'the year 2000' if variable=='Date' else '75m'}")
+        ax.set_title(
+            f"DAB Multiplex Power where {variable} > "
+            f"{'the year 2000' if variable=='Date' else '75m'}"
+        )
         ax.set_xticks(x + bar_width)
         ax.set_xticklabels(multiplexes)
         ax.legend()
