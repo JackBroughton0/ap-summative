@@ -60,8 +60,10 @@ def summary_stats_vis(df, multiplexes, figure_size):
     # Create a figure with two subplots
     fig, axes = plt.subplots(1, 2, figsize=figure_size)
     for idx, variable in enumerate(['Date', 'Site Height']):
-        data = {stat: [multiplex_stats[m][variable][stat] for m in multiplexes]
-                for stat in sum_stats}
+        data = {
+            stat: [multiplex_stats[m][variable][stat] for m in multiplexes]
+            for stat in sum_stats
+        }
         ax = axes[idx]
 
         # Create a bar plot for each variable
@@ -102,10 +104,17 @@ def other_bar_graphs(df, multiplexes, figure_size):
     # Create single DAB Multiplex column to facilitate groupby
     df = get_mp_column(df.copy(), multiplexes)
     # Pivot "Service Labels" into binary columns
-    df = pd.get_dummies(df, columns=['Serv Label1', 'Serv Label2',
-                                           'Serv Label3', 'Serv Label4',
-                                           'Serv Label10'], dtype=int,
-                                            prefix='', prefix_sep='')
+    df = pd.get_dummies(
+        df,
+        columns=[
+            'Serv Label1', 'Serv Label2',
+            'Serv Label3', 'Serv Label4',
+            'Serv Label10',
+        ],
+        dtype=int,
+        prefix='',
+        prefix_sep=''
+    )
 
     # Create subplots with 2 rows and 2 columns
     fig, axes = plt.subplots(2, 2, figsize=figure_size)

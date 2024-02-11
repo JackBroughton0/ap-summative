@@ -28,16 +28,25 @@ def custom_decode(file_path):
 def get_raw_data(antenna_path, params_path):
     """Get the raw data"""
     # Initialise list of required columns from antenna data
-    antenna_cols = ['id', 'NGR', 'Site Height',
-                    'In-Use Ae Ht', 'In-Use ERP Total']
+    antenna_cols = [
+        'id', 'NGR', 'Site Height',
+        'In-Use Ae Ht', 'In-Use ERP Total'
+    ]
     # Read in raw data sets, assume UTF-8 encoding
     try:
-        df_antenna = pd.read_csv(antenna_path, usecols=antenna_cols,
-                                 dtype='str')
+        df_antenna = pd.read_csv(
+            antenna_path,
+            usecols=antenna_cols,
+            dtype='str'
+        )
     except UnicodeDecodeError:
         print(f'Decoding error when reading Antenna dataset:\n{error}')
-        df_antenna = pd.read_csv(antenna_path, usecols=antenna_cols,
-                                 dtype='str', encoding='latin-1')
+        df_antenna = pd.read_csv(
+            antenna_path,
+            usecols=antenna_cols,
+            dtype='str',
+            encoding='latin-1'
+        )
         df_antenna = custom_decode(antenna_path)
     try:
         df_params = pd.read_csv(params_path, dtype='str')
@@ -119,7 +128,11 @@ def wrangle_dab_multiplex(df):
     dab_multiplexes = ['C18A', 'C18F', 'C188']
     # Create a column indicating the presence of each multiplex
     for multiplex in dab_multiplexes:
-        df[multiplex] = df["EID"].apply(lambda x: multiplex if x == multiplex else '')
+        df[multiplex] = df["EID"].apply(
+            lambda x: multiplex
+            if x == multiplex
+            else ''
+        )
     # Remove records not in the list of EIDs required for output
     df_out = df[df[dab_multiplexes].any(axis=1)]
     return df_out
@@ -128,13 +141,20 @@ def wrangle_dab_multiplex(df):
 def get_output_columns(df):
     """Remove columns that are not required for output"""
     # Rename columns according to client brief
-    df = df.rename({'In-Use Ae Ht': 'Aerial height(m)',
-                    'In-Use ERP Total': 'Power(kW)'}, axis=1)
+    df = df.rename(
+        {
+            'In-Use Ae Ht': 'Aerial height(m)',
+            'In-Use ERP Total': 'Power(kW)'
+        },
+        axis=1
+    )
     # Initialise list of columns required for output
-    keep_cols = ['id', 'NGR', 'C18A', 'C18F', 'C188', 'Site', 'Site Height',
-                 'Aerial height(m)', 'Power(kW)', 'Date', 'Freq',
-                 'Block', 'Serv Label1', 'Serv Label2', 'Serv Label3',
-                 'Serv Label4', 'Serv Label10']
+    keep_cols = [
+        'id', 'NGR', 'C18A', 'C18F', 'C188', 'Site', 'Site Height',
+        'Aerial height(m)', 'Power(kW)', 'Date', 'Freq',
+        'Block', 'Serv Label1', 'Serv Label2', 'Serv Label3',
+        'Serv Label4', 'Serv Label10',
+    ]
     # Get subset of dataframe with required columns
     df_out = df[keep_cols]
     return df_out
@@ -153,18 +173,22 @@ def format_json(df):
             'C18A': row['C18A'],
             'C18F': row['C18F'],
             'C188': row['C188'],
-            'Site Info': {'NGR': row['NGR'],
-                          'Site': row['Site'],
-                          'Site Height': row['Site Height']},
+            'Site Info': {
+                'NGR': row['NGR'],
+                'Site': row['Site'],
+                'Site Height': row['Site Height'],
+            },
             'Aerial height(m)': row['Aerial height(m)'],
             'Power(kW)': row['Power(kW)'],
             'Freq': row['Freq'],
             'Block': row['Block'],
-            'Service Labels': {'Serv Label1': row['Serv Label1'],
-                                'Serv Label2': row['Serv Label2'],
-                                'Serv Label3': row['Serv Label3'],
-                                'Serv Label4': row['Serv Label4'],
-                                'Serv Label10': row['Serv Label10']}
+            'Service Labels': {
+                'Serv Label1': row['Serv Label1'],
+                'Serv Label2': row['Serv Label2'],
+                'Serv Label3': row['Serv Label3'],
+                'Serv Label4': row['Serv Label4'],
+                'Serv Label10': row['Serv Label10'],
+            }
         }
         # Replace empty strings with None in the dictionary
         entry = {key: value if value not in ['', np.nan]
