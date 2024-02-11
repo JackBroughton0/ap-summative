@@ -5,8 +5,10 @@ import seaborn as sns
 
 
 def format_dataframe(df, vis_input):
-    """Format the dataframe so that only the data records
-    with the requested DAB multiplexes are processed further"""
+    """
+    Format the dataframe so that only the data records
+    with the requested DAB multiplexes are processed further
+    """
     # Get the requested DAB Multiplexes
     multiplexes = []
     for mp in ['C18A', 'C18F', 'C188']:
@@ -22,8 +24,10 @@ def format_dataframe(df, vis_input):
 
 
 def get_summary_stats(df_mp):
-    """Calculate the mean, median, and mode of Power(kW)
-    for the specified DAB multiplex"""
+    """
+    Calculate the mean, median, and mode of Power(kW)
+    for the specified DAB multiplex
+    """
     summary_stats = {}
     # Initialise 'Site Height' as an empty dictionary
     summary_stats['Site Height'] = {}
@@ -46,9 +50,11 @@ def get_summary_stats(df_mp):
 
 
 def summary_stats_vis(df, multiplexes, figure_size):
-    """Produce plot showing the mean, median, and mode of
+    """
+    Produce plot showing the mean, median, and mode of
     Power(kW) for the C18A, C18F, C188 DAB multiplexes where
-    the year is more than 2001 and site height is greater than 75m"""
+    the year is more than 2001 and site height is greater than 75m
+    """
     # Create empty dict to store stats for all specified DAB multiplexes
     multiplex_stats = {}
     for multiplex in multiplexes:
@@ -92,8 +98,10 @@ def summary_stats_vis(df, multiplexes, figure_size):
 
 
 def get_mp_column(df, multiplexes):
-    """Create one column to flag all DAB Multiplexes.
-    Drop original DAB Multiplex columns"""
+    """
+    Create one column to flag all DAB Multiplexes.
+    Drop original DAB Multiplex columns
+    """
     df['DAB_Multiplex'] = ''
     for mp in multiplexes:
         df.loc[df[mp]==mp, 'DAB_Multiplex'] = mp
@@ -103,8 +111,10 @@ def get_mp_column(df, multiplexes):
 
 
 def other_bar_graphs(df, multiplexes, figure_size):
-    """Produce plot showing counts of requested variables'
-    values for the requested DAB Multiplexes"""
+    """
+    Produce plot showing counts of requested variables'
+    values for the requested DAB Multiplexes
+    """
     # Create single DAB Multiplex column to facilitate groupby
     df = get_mp_column(df.copy(), multiplexes)
     # Pivot "Service Labels" into binary columns
@@ -155,6 +165,7 @@ def other_bar_graphs(df, multiplexes, figure_size):
 
 
 def cramers_v(x, y):
+    """Performs the cramers v calculation and returns the result"""
     confusion_matrix = pd.crosstab(x, y)
     chi2 = 0
     n = confusion_matrix.values.sum()
@@ -173,8 +184,10 @@ def cramers_v(x, y):
 
 
 def corr_graph(df, multiplexes, figure_size):
-    """Produce plot to determine if there is any significant correlation
-    between the requested variables for the requested DAB Multiplexes"""
+    """
+    Produce plot to determine if there is any significant correlation
+    between the requested variables for the requested DAB Multiplexes
+    """
     # Create single DAB Multiplex column to facilitate groupby
     df = get_mp_column(df.copy(), multiplexes)
     # Calculate Cramér's V matrix for all pairs of columns
@@ -201,8 +214,10 @@ def corr_graph(df, multiplexes, figure_size):
 
 
 def handler(df, vis_input):
-    """Applies user input parameters to the dataframe
-    and returns a figure of the selected visualisation"""
+    """
+    Applies user input parameters to the dataframe
+    and returns a figure of the selected visualisation
+    """
     # Get standard figure size
     figure_size = (10, 5)
     df, multiplexes = format_dataframe(df, vis_input)

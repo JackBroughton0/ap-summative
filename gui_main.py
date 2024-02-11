@@ -41,8 +41,10 @@ class RadioDataVisualisation:
         )
 
     def create_description(self):
-        """Write and format the description for
-          the app and position at the top of the window"""
+        """
+        Write and format the description for
+        the app and position at the top of the window
+        """
         # Description of the app's functionality and how to use it
         description = (
             "Visualise your DAB radio stations data!\n "
@@ -57,8 +59,10 @@ class RadioDataVisualisation:
         description_label.grid(row=0, column=0, columnspan=3, pady=(0,2))
 
     def create_upload_buttons(self):
-        """Create buttons to allow the user to upload their
-        data, one for clean data and one for raw data"""
+        """
+        Create buttons to allow the user to upload their
+        data, one for clean data and one for raw data
+        """
         # Clean and Upload button
         clean_raw_button = ttk.Button(
             self.root, text="Clean and Upload",
@@ -76,8 +80,10 @@ class RadioDataVisualisation:
         upload_json_button.grid(row=1, column=2, pady=(0,2))
 
     def create_dab_checkbuttons(self):
-        """Provide checkbuttons to determine which
-        DAB multiplexes to generate visualisations for"""
+        """
+        Provide checkbuttons to determine which DAB multiplexes
+        to generate visualisations for
+        """
         # DAB multiplex selection
         dab_multiplex = tk.Label(
             self.visualisation_frame,
@@ -103,8 +109,10 @@ class RadioDataVisualisation:
         c188_checkbox.grid(row=0, column=3, padx=5, pady=2, sticky="w")
 
     def create_vis_combobox(self):
-        """Create a combobox where the dropdown
-        provides a list of the available visualisations"""
+        """
+        Create a combobox where the dropdown
+        provides a list of the available visualisations
+        """
         visualisation_label = tk.Label(
             self.visualisation_frame,
             background="light blue",
@@ -130,8 +138,10 @@ class RadioDataVisualisation:
         visualisation_options.set("Summary Statistics")
 
     def create_vars_listbox(self):
-        """Create a listbox containing the variables
-        that can be included in the visualisations"""
+        """
+        Create a listbox containing the variables
+        that can be included in the visualisations
+        """
         variables_label = tk.Label(
             self.visualisation_frame,
             background="light blue",
@@ -153,8 +163,7 @@ class RadioDataVisualisation:
             self.variables_listbox.insert(tk.END, variable)
 
     def create_generate_button(self):
-        """Create a button to allow visualisations
-        to be displayed"""
+        """Create a button to allow visualisations to be displayed"""
         generate_button = ttk.Button(
             self.visualisation_frame,
             text="Generate", padding=(10, 5),
@@ -177,8 +186,10 @@ class RadioDataVisualisation:
         )
 
     def format_visual_frame(self):
-        """Organise the Data Visualisation Frame by
-        creating and positioning the necessary widgets"""
+        """
+        Organise the Data Visualisation Frame by
+        creating and positioning the necessary widgets
+        """
         # Provide DAB multiplex options 
         self.create_dab_checkbuttons()
         # Provide visualisation type options
@@ -191,8 +202,7 @@ class RadioDataVisualisation:
         self.create_message_label()
 
     def create_widgets(self):
-        """Create widgets for the user interface and
-        organise positioning"""
+        """Create widgets for the user interface and organise positioning"""
         # Create a description of the app
         self.create_description()
         # Create buttons to allow file uploads
@@ -325,8 +335,10 @@ class RadioDataVisualisation:
             )
 
     def generate_visualisation(self):
-        """Pass the selected visualisation options to
-        the visualisations module and plot the outputs"""
+        """
+        Pass the selected visualisation options to the visualisations module
+        and plot the outputs
+        """
         # Check that at least one DAB multiplex has been selected
         mp_list = [
             self.c18a_var.get(),

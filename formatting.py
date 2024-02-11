@@ -26,7 +26,7 @@ def custom_decode(file_path):
 
 
 def get_raw_data(antenna_path, params_path):
-    """Get the raw data"""
+    """Extract the raw data from the relevant csv"""
     # Initialise list of required columns from antenna data
     antenna_cols = [
         'id', 'NGR', 'Site Height',
@@ -78,8 +78,10 @@ def format_dates(df):
 
 
 def type_cast(df):
-    """Cast the data types of the columns required
-    for output to generate visualisations"""
+    """
+    Cast the data types of the columns required
+    for output to generate visualisations
+    """
     # Parse dates
     df = format_dates(df)
     # Convert to integer columns
@@ -121,9 +123,10 @@ def remove_invalid_stations(df):
 
 
 def wrangle_dab_multiplex(df):
-    """Extract DAB multiplex blocks C18A, C18F and C188 into
-      their own columns and drop records that don't have
-      these EID values"""
+    """
+    Extract DAB multiplex blocks C18A, C18F and C188 into their
+    own columns and drop records that don't have these EID values
+    """
     # Initialise list of required DAB multiplexes
     dab_multiplexes = ['C18A', 'C18F', 'C188']
     # Create a column indicating the presence of each multiplex
@@ -161,8 +164,10 @@ def get_output_columns(df):
 
 
 def format_json(df):
-    """Convert data into a dictionary ready to accurately
-    upload to the radio_data MongoDB database"""
+    """
+    Convert data into a dictionary ready to accurately
+    upload to the radio_data MongoDB database
+    """
     # Create a list to store the data
     data = []
     # Iterate through each row in the DataFrame

@@ -19,3 +19,4 @@ for document in cursor:
 with open(output_file, "w") as file:
     # Write the entire list as a JSON array to the file
     json.dump(documents_list, file, default=str)
+

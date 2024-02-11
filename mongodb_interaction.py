@@ -20,8 +20,10 @@ def clean_column_name(column_name):
 
 
 def retrieve_from_mongo():
-    """Retrieve the cleaned and formatted data from MongoDB.
-    This will be the input data for data visualisations"""
+    """
+    Retrieve the cleaned and formatted data from MongoDB.
+    This will be the input data for data visualisations
+    """
     collection = connect_to_mongodb()
     # Get all the documents stored in the MongoDB collection
     all_documents = collection.find({})
@@ -36,8 +38,10 @@ def retrieve_from_mongo():
 
 
 def connect_to_mongodb():
-    """Connect to the Mongodb server and return the
-    collection responsible for storing the formatted data"""
+    """
+    Connect to the Mongodb server and return the
+    collection responsible for storing the formatted data
+    """
     # Establish a connection to the MongoDB server
     client = pymongo.MongoClient("mongodb://localhost:27017/")
     db = client["radio_data"]
